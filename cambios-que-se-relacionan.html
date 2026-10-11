@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cambios que se relacionan</title>
+<style>
+  :root{
+    --acento:#035C80; --acento-osc:#024a67; --amarillo:#FFCD02; --amar-claro:#FFF6CC; --navy:#1D3343;
+    --turquesa:#8DE2D6; --turq-claro:#E6F7F4; --fondo:#F4F7F8; --linea:#D9E2E6;
+    --suave:#5A6B76; --ok:#16875F; --ok-claro:#E3F4EC; --error:#C8452C; --error-claro:#FBE7E2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  [hidden]{display:none !important}
+  html,body{background:transparent}
+  body{font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--navy)}
+
+  .app{position:relative;height:480px;overflow:hidden;background:var(--fondo);border-radius:14px;
+       padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+  .top h1{font-size:19px;font-weight:800;letter-spacing:-.01em;line-height:1.15}
+  .top p{font-size:14px;color:var(--suave);margin-top:3px;line-height:1.35}
+
+  .tablero{position:relative;flex:1;min-height:0;display:grid;grid-template-columns:1fr 64px 1fr;
+           grid-template-rows:auto auto;align-content:center;column-gap:0;row-gap:10px}
+  .rotulo{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--acento)}
+  .rotulo.der{grid-column:3}
+  .col{display:flex;flex-direction:column;gap:8px;justify-content:center;min-height:0}
+  .col.izq{grid-column:1;grid-row:2} .col.der{grid-column:3;grid-row:2}
+  svg.lazos{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2}
+
+  .carta{position:relative;background:#fff;border:1.5px solid var(--linea);border-radius:11px;padding:8px 12px;
+         min-height:50px;display:flex;align-items:center;font:inherit;font-size:14.5px;line-height:1.28;text-align:left;
+         color:var(--navy);cursor:pointer;touch-action:none;user-select:none;
+         transition:border-color .15s,background .15s,box-shadow .15s}
+  .carta:hover:not(.hecha){border-color:var(--acento)}
+  .carta:focus-visible{outline:3px solid var(--turquesa);outline-offset:1px}
+  .izq .carta{padding-right:22px} .der .carta{padding-left:22px}
+  .punto{position:absolute;top:50%;width:12px;height:12px;border-radius:50%;background:#fff;border:2.5px solid #A8B6BE;
+         transform:translateY(-50%)}
+  .izq .punto{right:-7px} .der .punto{left:-7px}
+  .carta.sel{border-color:var(--amarillo);background:var(--amar-claro);box-shadow:0 0 0 3px rgba(255,205,2,.35)}
+  .carta.sel .punto{border-color:var(--navy);background:var(--amarillo)}
+  .carta.hecha{border-color:var(--ok);background:var(--ok-claro);cursor:default}
+  .carta.hecha .punto{border-color:var(--ok);background:var(--ok)}
+  .carta.error{border:2px solid var(--error) !important;background:#FBE1DB !important;color:var(--navy);font-weight:600;animation:sacude .35s}
+  .carta.error .punto{border-color:var(--error);background:var(--error)}
+  @keyframes sacude{20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
+
+  .devol{flex:0 0 auto;min-height:62px;border-radius:11px;padding:9px 13px;font-size:13.5px;line-height:1.38;
+         background:#fff;border:1px solid var(--linea);display:flex;gap:12px;align-items:center}
+  .devol .txt{flex:1}
+  .devol b{display:block;font-size:13.5px}
+  .devol.ok{background:var(--ok-claro);border-color:transparent;border-left:4px solid var(--ok)}
+  .devol.mal{background:var(--error-claro);border-color:transparent;border-left:4px solid var(--error)}
+  .devol.ok, .devol.mal{animation:aparece .3s ease}
+  @keyframes aparece{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .cuenta{flex:0 0 auto;display:flex;gap:5px}
+  .cuenta i{width:10px;height:10px;border-radius:50%;background:var(--linea)}
+  .cuenta i.on{background:var(--ok)}
+  .btn{font:inherit;font-weight:700;font-size:14px;border:none;border-radius:999px;padding:9px 18px;cursor:pointer;
+       background:var(--amarillo);color:var(--navy);white-space:nowrap}
+  .btn:hover{background:#f0c000}
+  .btn.az{background:var(--acento);color:#fff} .btn.az:hover{background:var(--acento-osc)}
+
+
+  /* Color */
+  .app{padding-top:20px}
+  .app::before{content:"";position:absolute;left:0;top:0;width:100%;height:6px;
+    background:linear-gradient(90deg,var(--turquesa) 0 25%,var(--acento) 25% 50%,var(--amarillo) 50% 75%,var(--navy) 75%)}
+  .top h1 span{color:var(--acento)}
+  .rotulo{display:inline-flex;align-items:center;gap:6px}
+  .rotulo::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--acento)}
+  .rotulo.der::before{background:var(--amarillo)}
+  .izq .carta{background:#E3EFF5;border-color:#B9D4E1;border-left:5px solid var(--acento)}
+  .der .carta{background:#FFFBE8;border-color:#F3E3A0;border-right:5px solid var(--amarillo)}
+  .carta.sel{border-color:var(--acento) !important;background:#fff !important;box-shadow:0 0 0 3px rgba(3,92,128,.25)}
+  .carta.sel .punto{border-color:var(--acento);background:var(--acento)}
+  .carta.hecha{background:#DDF2E7 !important;color:var(--navy);border:2px solid var(--ok) !important;font-weight:600}
+  .carta.hecha .punto{border-color:var(--ok);background:var(--ok)}
+  .carta.hecha::after{content:"✓";position:absolute;top:4px;font-size:12px;font-weight:800;color:var(--ok)}
+  .izq .carta.hecha::after{right:12px} .der .carta.hecha::after{left:12px}
+  .devol.ok{border-left-color:var(--c,var(--ok));background:var(--ct,var(--ok-claro))}
+  .cuenta i.on{background:var(--ok)}
+  .rel li{display:flex;gap:10px;align-items:flex-start}
+  .rel .n{flex:0 0 auto;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-weight:800;
+          font-size:12px;margin-top:1px}
+  .tarjeta{border-top:6px solid var(--amarillo)}
+
+  /* Encabezados de columna */
+  .rotulo{grid-row:1;grid-column:1;display:flex;align-items:center;gap:0;font-size:16px;font-weight:800;
+          letter-spacing:0;text-transform:none;border-radius:10px;padding:8px 14px;
+          background:var(--acento);color:#fff}
+  .rotulo::before{display:none}
+  .rotulo.der{grid-column:3;background:var(--amarillo);color:var(--navy)}
+  .flecha-tit{grid-row:1;grid-column:2;display:grid;place-items:center;font-size:22px;font-weight:800;color:var(--acento)}
+  .col{justify-content:flex-start}
+  @media (max-width:560px){ .rotulo{font-size:13.5px;padding:6px 9px} .flecha-tit{font-size:16px} .carta.hecha::after{display:none} }
+
+  /* Capa final */
+  .capa{position:absolute;inset:0;background:rgba(29,51,67,.72);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+        display:flex;align-items:center;justify-content:center;padding:14px;z-index:10;animation:fundido .3s ease}
+  @keyframes fundido{from{opacity:0}to{opacity:1}}
+  .tarjeta{background:rgba(255,255,255,.97);border-radius:16px;width:min(700px,100%);max-height:100%;overflow:auto;
+           padding:16px 20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  .tarjeta h2{font-size:18px;line-height:1.2}
+  .tarjeta .sub{font-size:13.5px;color:var(--suave);margin-top:2px}
+  .rel{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .rel li{font-size:13px;line-height:1.35;color:#2E4655}
+  .rel b{display:block;font-size:13.5px;color:var(--navy)}
+  .rel .fl{color:var(--acento)}
+  .general{background:var(--turq-claro);border-left:4px solid var(--turquesa);border-radius:9px;padding:9px 12px;
+           font-size:14px;line-height:1.42}
+  .general b{color:var(--acento)}
+  .tarjeta .btn{align-self:center}
+
+  @media (max-width:560px){
+    .top h1{font-size:17px} .top p{font-size:12.5px}
+    .tablero{grid-template-columns:1fr 34px 1fr}
+    .carta{font-size:12.5px;min-height:46px;padding:6px 9px}
+    .izq .carta{padding-right:14px} .der .carta{padding-left:14px}
+    .col{gap:6px}
+    .devol{font-size:12.5px;min-height:56px;padding:7px 10px}
+    .rotulo{font-size:10px}
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <h1>Cambios que <span>se relacionan</span></h1>
+    <p>Leé las transformaciones. Después, uní cada cambio con el que podría haber favorecido o impulsado.</p>
+  </header>
+
+  <div class="tablero" id="tablero">
+    <div class="rotulo">Este cambio…</div>
+    <div class="flecha-tit" aria-hidden="true">→</div>
+    <div class="rotulo der">…pudo favorecer</div>
+    <div class="col izq" id="izq"></div>
+    <div class="col der" id="der"></div>
+    <svg class="lazos" id="lazos" aria-hidden="true"></svg>
+  </div>
+
+  <div class="devol" id="devol" aria-live="polite">
+    <div class="txt" id="devolTxt">Tocá un cambio de la izquierda y después el de la derecha que pudo impulsar. También podés arrastrar de uno al otro.</div>
+    <div class="cuenta" id="cuenta"></div>
+    <button class="btn" id="btnCierre" hidden>Ver cierre</button>
+  </div>
+
+  <div class="capa" id="capa" hidden>
+    <div class="tarjeta" role="dialog" aria-modal="true" aria-labelledby="capaTit">
+      <div><h2 id="capaTit">Uniste las cuatro relaciones</h2><div class="sub" id="capaSub"></div></div>
+      <ul class="rel" id="rel"></ul>
+      <div class="general"><b>Para cerrar.</b> Estos procesos no ocurrieron de manera aislada ni en una secuencia exacta. Se superpusieron y se influyeron entre sí, transformando la organización económica y social de muchas ciudades medievales.</div>
+      <button class="btn az" id="btnReiniciar">Volver a empezar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const RELACIONES = [
+  { causa:"Crecimiento de ferias y mercados", efecto:"Aumento del comercio entre ciudades y regiones",
+    corto:"Ferias y mercados → aumento del comercio",
+    devol:"Más espacios de intercambio facilitaron que productos y comerciantes circularan entre distintos lugares." },
+  { causa:"Aumento del comercio", efecto:"Desarrollo de nuevos oficios y talleres urbanos",
+    corto:"Aumento del comercio → nuevos oficios y talleres",
+    devol:"Una mayor demanda de productos favoreció el crecimiento de actividades artesanales y talleres urbanos." },
+  { causa:"Desarrollo de nuevos oficios y talleres", efecto:"Organización de artesanos en gremios",
+    corto:"Nuevos oficios y talleres → organización en gremios",
+    devol:"Artesanos de una misma actividad comenzaron a agruparse para regular distintos aspectos del trabajo y la formación." },
+  { causa:"Crecimiento del comercio y de los oficios urbanos", efecto:"Mayor importancia de mercaderes y burguesía urbana",
+    corto:"Comercio y oficios urbanos → mayor importancia de mercaderes y burguesía",
+    devol:"Quienes participaban del comercio y de los oficios adquirieron mayor peso económico y social en muchas ciudades." }
+];
+const VERDE = { c:"#16875F", ct:"#E3F4EC", n:"#fff", bg:"#1E9467" };
+const COLORES = [VERDE, VERDE, VERDE, VERDE];
+const $ = id => document.getElementById(id);
+const NS = "http://www.w3.org/2000/svg";
+let unidas, primerIntento, errores, sel, arrastre, fallido = null, timerFallido;
+
+function mezclar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function iniciar(){
+  unidas = new Set(); primerIntento = new Set(); errores = new Set(); sel = null;
+  $("izq").innerHTML = ""; $("der").innerHTML = "";
+  RELACIONES.forEach((r,i) => $("izq").appendChild(carta(r.causa, "izq", i)));
+  let orden; do { orden = mezclar([0,1,2,3]); } while (orden.some((v,k)=>v===k)); // ninguna enfrentada a su par
+  orden.forEach(i => $("der").appendChild(carta(RELACIONES[i].efecto, "der", i)));
+  $("devol").className = "devol";
+  $("devolTxt").innerHTML = "Tocá un cambio de la izquierda y después el de la derecha que pudo impulsar. También podés arrastrar de uno al otro.";
+  $("btnCierre").hidden = true; $("cuenta").hidden = false;
+  $("capa").hidden = true;
+  dibujar();
+}
+
+function carta(texto, lado, i){
+  const b = document.createElement("button");
+  b.className = "carta"; b.dataset.lado = lado; b.dataset.i = i;
+  b.innerHTML = `<span>${texto}</span><span class="punto"></span>`;
+  b.addEventListener("pointerdown", bajar);
+  b.addEventListener("keydown", e => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); tocar(b); } });
+  return b;
+}
+
+/* Selección por toque o por arrastre */
+function bajar(e){
+  const b = e.currentTarget;
+  if (b.classList.contains("hecha")) return;
+  e.preventDefault();
+  b.setPointerCapture(e.pointerId);
+  arrastre = { b, x0:e.clientX, y0:e.clientY, movio:false };
+  b.addEventListener("pointermove", mover);
+  b.addEventListener("pointerup", subir);
+  b.addEventListener("pointercancel", cancelar);
+}
+function mover(e){
+  if (!arrastre) return;
+  if (!arrastre.movio && Math.hypot(e.clientX-arrastre.x0, e.clientY-arrastre.y0) > 8){
+    arrastre.movio = true; seleccionar(arrastre.b);
+  }
+  if (arrastre.movio){ arrastre.x = e.clientX; arrastre.y = e.clientY; dibujar(); }
+}
+function subir(e){
+  const a = arrastre; limpiarArrastre();
+  if (!a) return;
+  if (!a.movio){ tocar(a.b); return; }
+  const destino = document.elementFromPoint(e.clientX, e.clientY)?.closest(".carta");
+  if (destino && destino.dataset.lado !== a.b.dataset.lado && !destino.classList.contains("hecha")) intentar(a.b, destino);
+  else { seleccionar(null); }
+  dibujar();
+}
+function cancelar(){ limpiarArrastre(); seleccionar(null); dibujar(); }
+function limpiarArrastre(){
+  if (!arrastre) return;
+  const b = arrastre.b;
+  b.removeEventListener("pointermove", mover); b.removeEventListener("pointerup", subir); b.removeEventListener("pointercancel", cancelar);
+  arrastre = null;
+}
+
+function tocar(b){
+  if (b.classList.contains("hecha")) return;
+  if (!sel || sel === b){ seleccionar(sel === b ? null : b); return; }
+  if (sel.dataset.lado === b.dataset.lado){ seleccionar(b); return; }
+  intentar(sel, b);
+}
+function seleccionar(b){
+  document.querySelectorAll(".carta.sel").forEach(x => x.classList.remove("sel"));
+  sel = b; if (b) b.classList.add("sel");
+}
+
+function intentar(a, b){
+  const izq = a.dataset.lado === "izq" ? a : b, der = a.dataset.lado === "izq" ? b : a;
+  const i = +izq.dataset.i, j = +der.dataset.i;
+  seleccionar(null);
+  if (i === j){
+    unidas.add(i);
+    if (!errores.has(i)) primerIntento.add(i);
+    izq.classList.add("hecha"); der.classList.add("hecha");
+    izq.disabled = der.disabled = true;
+    const col = COLORES[i];
+    [izq, der].forEach(x => { x.style.setProperty("--bg", col.bg); x.style.setProperty("--tx", col.n); });
+    const r = RELACIONES[i];
+    $("devol").style.setProperty("--c", col.c); $("devol").style.setProperty("--ct", col.ct);
+    $("devol").className = "devol ok";
+    $("devolTxt").innerHTML = `<b>${r.corto}</b>${r.devol}`;
+    if (unidas.size === RELACIONES.length){ $("btnCierre").hidden = false; $("cuenta").hidden = true; }
+  } else {
+    errores.add(i);
+    [izq, der].forEach(x => { x.classList.remove("error"); void x.offsetWidth; x.classList.add("error"); });
+    fallido = [izq, der];
+    clearTimeout(timerFallido);
+    timerFallido = setTimeout(() => { izq.classList.remove("error"); der.classList.remove("error"); fallido = null; dibujar(); }, 1200);
+    $("devol").className = "devol mal";
+    $("devolTxt").innerHTML = "<b>Probá otra vez.</b>Esa relación puede existir, pero hay otro cambio que este impulsó de forma más directa.";
+  }
+  dibujar();
+}
+
+/* Líneas */
+function ancla(b){
+  const t = $("tablero").getBoundingClientRect(), r = b.getBoundingClientRect();
+  return { x: b.dataset.lado === "izq" ? r.right - t.left : r.left - t.left, y: r.top + r.height/2 - t.top };
+}
+function linea(p, q, color, punteada){
+  const dx = Math.max(30, (q.x - p.x) * .5);
+  const path = document.createElementNS(NS, "path");
+  path.setAttribute("d", `M${p.x} ${p.y} C${p.x+dx} ${p.y} ${q.x-dx} ${q.y} ${q.x} ${q.y}`);
+  path.setAttribute("fill","none"); path.setAttribute("stroke", color); path.setAttribute("stroke-width","3");
+  path.setAttribute("stroke-linecap","round");
+  if (punteada) path.setAttribute("stroke-dasharray","2 7");
+  return path;
+}
+function dibujar(){
+  const svg = $("lazos"); svg.innerHTML = "";
+  unidas.forEach(i => {
+    const a = document.querySelector(`.izq .carta[data-i="${i}"]`), b = document.querySelector(`.der .carta[data-i="${i}"]`);
+    svg.appendChild(linea(ancla(a), ancla(b), COLORES[i].c));
+  });
+  if (fallido) svg.appendChild(linea(ancla(fallido[0]), ancla(fallido[1]), "#C8452C"));
+  if (arrastre && arrastre.movio){
+    const t = $("tablero").getBoundingClientRect();
+    const p = ancla(arrastre.b), q = { x: arrastre.x - t.left, y: arrastre.y - t.top };
+    svg.appendChild(arrastre.b.dataset.lado === "izq" ? linea(p, q, "#035C80", true) : linea(q, p, "#035C80", true));
+  }
+  $("cuenta").innerHTML = RELACIONES.map((_,i) => `<i class="${unidas.has(i)?"on":""}"></i>`).join("");
+}
+window.addEventListener("resize", dibujar);
+
+$("btnCierre").onclick = () => {
+  const n = primerIntento.size;
+  $("capaSub").textContent = n === RELACIONES.length
+    ? "¡Lograste 4 de 4 al primer intento!"
+    : `Lograste ${n} de ${RELACIONES.length} al primer intento.`;
+  $("rel").innerHTML = RELACIONES.map((r,i) => {
+    const [c,e] = r.corto.split(" → "), k = COLORES[i];
+    return `<li><span class="n" style="background:${k.bg};color:${k.n}">${i+1}</span><span><b>${c} <span class="fl">→</span> ${e}</b>${r.devol}</span></li>`;
+  }).join("");
+  $("capa").hidden = false;
+  $("btnReiniciar").focus();
+};
+$("btnReiniciar").onclick = iniciar;
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("capa").hidden = true; });
+
+iniciar();
+</script>
+</body>
+</html>
