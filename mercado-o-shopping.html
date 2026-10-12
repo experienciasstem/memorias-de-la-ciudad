@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mercado de Abasto o Abasto Shopping</title>
+<style>
+  :root{
+    --acento:#035C80; --acento-osc:#024a67; --amarillo:#FFCD02; --navy:#1D3343;
+    --turquesa:#8DE2D6; --turq-claro:#E6F7F4; --fondo:#F4F7F8; --linea:#D9E2E6;
+    --suave:#5A6B76; --ok:#16875F; --ok-claro:#E3F4EC; --error:#C8452C; --error-claro:#FBE1DB;
+    --sepia:#66727B; --sepia-claro:#EEF1F3;
+    --oro:#C99A00; --oro-claro:#FFF6D6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  [hidden]{display:none !important}
+  html,body{background:transparent}
+  body{font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--navy)}
+
+  .app{position:relative;height:480px;overflow:hidden;background:var(--fondo);border-radius:14px;
+       padding:20px 16px 12px;display:flex;flex-direction:column;gap:10px}
+  .app::before{content:"";position:absolute;left:0;top:0;width:100%;height:6px;
+    background:linear-gradient(90deg,var(--sepia) 0 33.3%,var(--acento) 33.3% 66.6%,var(--amarillo) 66.6%)}
+  .top{position:relative;padding-right:40px}
+  .sonido{position:absolute;top:-2px;right:0;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--linea);background:#fff;font-size:15px;cursor:pointer;line-height:1}
+  .sonido:hover{border-color:var(--acento)}
+  .sonido[aria-pressed="false"]{opacity:.55}
+  .top h1{font-size:19px;font-weight:800;letter-spacing:-.01em;line-height:1.15}
+  .top h1 span{color:var(--acento)}
+  .top p{font-size:14px;color:var(--suave);margin-top:3px;line-height:1.35}
+
+  /* Banco de tarjetas */
+  .banco{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:7px;min-height:38px;padding:8px;border-radius:12px;
+         border:1.5px dashed #C3D0D6;background:#fff;align-content:flex-start}
+  .banco.vacio{display:none}
+  .tarjeta{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--linea);border-radius:999px;
+           padding:6px 12px;font:inherit;font-size:13.5px;line-height:1.2;color:var(--navy);cursor:grab;touch-action:none;
+           user-select:none;box-shadow:0 1px 2px rgba(29,51,67,.08);transition:border-color .15s,background .15s,box-shadow .15s}
+  .tarjeta:hover{border-color:var(--acento)}
+  .tarjeta:focus-visible{outline:3px solid var(--turquesa);outline-offset:1px}
+  .tarjeta.sel{border-color:var(--acento);background:#E3EFF5;box-shadow:0 0 0 3px rgba(3,92,128,.2)}
+  .tarjeta.flotando{position:fixed;z-index:50;pointer-events:none;cursor:grabbing;box-shadow:0 8px 20px rgba(29,51,67,.25);
+                    border-color:var(--acento)}
+  .tarjeta.bien{border-color:var(--ok);background:#D3EFE0;cursor:default}
+  .tarjeta.mal{border-color:var(--error);background:#F9D7CF}
+  .tarjeta .m{font-weight:800;font-size:12px}
+  .tarjeta.bien .m{color:var(--ok)} .tarjeta.mal .m{color:var(--error)}
+
+  /* Contenedores */
+  .cajas{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .caja{display:flex;flex-direction:column;min-height:0;border-radius:12px;border:2px solid;background:#fff;overflow:hidden;
+        transition:box-shadow .15s,transform .15s}
+  .caja h2{flex:0 0 auto;font-size:15px;font-weight:800;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+  .caja h2 small{font-size:12px;font-weight:600;opacity:.8}
+  .caja .dentro{flex:1;min-height:0;overflow:auto;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
+  .caja.mercado{border-color:var(--sepia)} .caja.mercado h2{background:var(--sepia);color:#fff} .caja.mercado .dentro{background:var(--sepia-claro)}
+  .caja.shopping{border-color:var(--oro)} .caja.shopping h2{background:var(--amarillo);color:var(--navy)} .caja.shopping .dentro{background:var(--oro-claro)}
+  .caja.ambos{border-color:var(--acento)} .caja.ambos h2{background:var(--acento);color:#fff} .caja.ambos .dentro{background:#E3EFF5}
+  .caja.encima{box-shadow:0 0 0 4px rgba(3,92,128,.25);transform:translateY(-2px)}
+  .caja.destino{cursor:pointer}
+  .caja.destino .dentro{outline:2px dashed rgba(3,92,128,.35);outline-offset:-6px;border-radius:8px}
+
+  .pie{flex:0 0 auto;display:flex;align-items:center;gap:10px;min-height:38px}
+  .estado{flex:1;font-size:13.5px;color:var(--suave);line-height:1.3}
+  .estado b{color:var(--navy)}
+  .btn{font:inherit;font-weight:700;font-size:14px;border:none;border-radius:999px;padding:9px 18px;cursor:pointer;
+       background:var(--acento);color:#fff;white-space:nowrap}
+  .btn:hover{background:var(--acento-osc)}
+  .btn:disabled{background:var(--linea);color:#8a99a2;cursor:default}
+  .btn.sec{background:#fff;color:var(--acento);border:1.5px solid var(--acento)}
+  .btn.sec:hover{background:#E3EFF5}
+  .btn.am{background:var(--amarillo);color:var(--navy)} .btn.am:hover{background:#f0c000}
+
+  /* Capa final */
+  .capa{position:absolute;inset:0;background:rgba(29,51,67,.72);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+        display:flex;align-items:center;justify-content:center;padding:14px;z-index:10;animation:fundido .3s ease}
+  @keyframes fundido{from{opacity:0}to{opacity:1}}
+  .final{background:rgba(255,255,255,.97);border-radius:16px;border-top:6px solid var(--amarillo);width:min(720px,100%);
+         max-height:100%;overflow:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  .final h2{font-size:18px;line-height:1.2}
+  .final .sub{font-size:13.5px;color:var(--suave);margin-top:2px}
+  .grupo{border-left:4px solid;border-radius:8px;padding:7px 11px;font-size:13px;line-height:1.38;color:#2E4655}
+  .grupo b{display:block;font-size:14px;color:var(--navy)}
+  .grupo i{font-style:normal;font-weight:700;color:var(--navy)}
+  .grupo ul{list-style:none;display:flex;flex-direction:column;gap:4px;margin-top:3px}
+  .grupo.mercado{border-color:var(--sepia);background:var(--sepia-claro)}
+  .grupo.shopping{border-color:var(--oro);background:var(--oro-claro)}
+  .grupo.ambos{border-color:var(--acento);background:#E3EFF5}
+  .cierre{background:var(--turq-claro);border-left:4px solid var(--turquesa);border-radius:9px;padding:9px 12px;font-size:13.5px;line-height:1.42}
+  .cierre b{color:var(--acento)}
+  .final .acciones{display:flex;justify-content:center;gap:10px}
+
+  @media (max-width:560px){
+    .app{padding:16px 10px 10px;gap:8px}
+    .top h1{font-size:16px} .top p{font-size:12px}
+    .tarjeta{font-size:11.5px;padding:5px 9px}
+    .cajas{gap:6px}
+    .caja h2{font-size:12px;padding:6px 7px;flex-direction:column;align-items:flex-start;gap:0}
+    .caja .dentro{padding:5px;gap:4px}
+    .estado{font-size:12px} .btn{padding:8px 13px;font-size:13px}
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <button class="sonido" id="btnSonido" aria-pressed="true" title="Sonido activado" aria-label="Sonido activado">🔊</button>
+    <h1>¿Mercado de Abasto, <span>Abasto Shopping</span> o ambos?</h1>
+    <p>Leé cada tarjeta y decidí si se relaciona con el Mercado de Abasto, con el Abasto Shopping o con ambos. Luego, arrastrala al contenedor correspondiente.</p>
+  </header>
+
+  <div class="banco" id="banco" aria-label="Tarjetas para clasificar"></div>
+
+  <div class="cajas">
+    <section class="caja mercado" data-cat="mercado"><h2>Mercado de Abasto <small id="n-mercado"></small></h2><div class="dentro"></div></section>
+    <section class="caja shopping" data-cat="shopping"><h2>Abasto Shopping <small id="n-shopping"></small></h2><div class="dentro"></div></section>
+    <section class="caja ambos" data-cat="ambos"><h2>Ambos <small id="n-ambos"></small></h2><div class="dentro"></div></section>
+  </div>
+
+  <div class="pie">
+    <div class="estado" id="estado">Arrastrá una tarjeta o tocala y después tocá el contenedor.</div>
+    <button class="btn sec" id="btnVer" hidden>Ver devolución</button>
+    <button class="btn" id="btnComprobar" disabled>Comprobar</button>
+  </div>
+
+  <div class="capa" id="capa" hidden>
+    <div class="final" role="dialog" aria-modal="true" aria-labelledby="finTit">
+      <div><h2 id="finTit">Así se clasifican</h2><div class="sub" id="finSub"></div></div>
+      <div class="grupo mercado"><b>Mercado de Abasto</b><ul id="g-mercado"></ul></div>
+      <div class="grupo shopping"><b>Abasto Shopping</b><ul id="g-shopping"></ul></div>
+      <div class="grupo ambos"><b>Ambos</b><ul id="g-ambos"></ul></div>
+      <div class="cierre"><b>Para cerrar.</b> Aunque el edificio mantuvo un uso comercial, su función cambió profundamente. El antiguo Mercado de Abasto estaba ligado al abastecimiento y la distribución mayorista de alimentos; el shopping está orientado al consumo, los servicios, la gastronomía y el entretenimiento. También cambiaron los trabajos, las formas de circulación y el modo en que las personas usan el espacio.</div>
+      <div class="acciones">
+        <button class="btn sec" id="btnCerrar">Volver</button>
+        <button class="btn" id="btnReiniciar">Empezar de nuevo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Clave de respuestas (mercado | shopping | ambos) y devolución de cada tarjeta
+const TARJETAS = [
+  { t:"Venta mayorista de alimentos", cat:"mercado",
+    r:"El mercado concentraba la compra y venta mayorista de frutas, verduras y otros alimentos." },
+  { t:"Distribución de mercaderías alimenticias", cat:"mercado",
+    r:"Al mercado llegaban productos que se descargaban, comercializaban y distribuían hacia distintos puntos de la Ciudad." },
+  { t:"Llegada de carros y camiones con productos", cat:"mercado",
+    r:"El abastecimiento requería medios de transporte para ingresar y retirar grandes cantidades de mercadería." },
+  { t:"Gastronomía", cat:"shopping",
+    r:"Actualmente el edificio incluye locales y servicios gastronómicos destinados a quienes lo visitan." },
+  { t:"Entretenimiento", cat:"shopping",
+    r:"El shopping incorpora propuestas de entretenimiento que no formaban parte de la función principal del antiguo mercado." },
+  { t:"Servicios para visitantes", cat:"shopping",
+    r:"Hoy el edificio reúne distintas actividades y servicios orientados principalmente a quienes llegan como clientes o visitantes." },
+  { t:"Actividad comercial", cat:"ambos",
+    r:"En los dos momentos el edificio concentra actividades vinculadas con el comercio, aunque cambia profundamente qué se comercializa y de qué manera." },
+  { t:"Trabajo de comerciantes", cat:"ambos",
+    r:"Tanto el mercado como el shopping requieren personas vinculadas con la venta y otras tareas comerciales." },
+  { t:"Circulación de personas", cat:"ambos",
+    r:"En ambos momentos muchas personas llegan, circulan y realizan actividades dentro y alrededor del edificio." },
+  { t:"Llegada de personas desde distintos lugares", cat:"ambos",
+    r:"Tanto el mercado como el shopping atraen personas de diferentes zonas, aunque lo hacen por motivos y actividades distintas." }
+];
+const $ = id => document.getElementById(id);
+
+/* Sonidos generados (sin archivos): bien = dos notas que suben, mal = tono grave corto */
+let audio = null, conSonido = true;
+function ctx(){ if (!audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} } if (audio && audio.state === "suspended") audio.resume(); return audio; }
+function nota(f, t0, dur, tipo="sine", vol=.18){
+  const a = ctx(); if (!a) return;
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = tipo; o.frequency.setValueAtTime(f, a.currentTime + t0);
+  g.gain.setValueAtTime(0.0001, a.currentTime + t0);
+  g.gain.exponentialRampToValueAtTime(vol, a.currentTime + t0 + .015);
+  g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + t0 + dur);
+  o.connect(g).connect(a.destination); o.start(a.currentTime + t0); o.stop(a.currentTime + t0 + dur + .02);
+}
+function barrido(f1, f2, dur, tipo="sine", vol=.2){
+  const a = ctx(); if (!a) return;
+  const o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+  o.type = tipo; o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + .02);
+}
+// Mismos dos sonidos para todas las fichas: levantar (sube, cortito) y colocar (baja, tipo "pop")
+const SONIDO = {
+  levantar(){ if (conSonido) barrido(420, 760, .07, "sine", .12); },
+  colocar(){ if (conSonido) barrido(520, 180, .12, "triangle", .22); }
+};
+$("btnSonido").onclick = () => {
+  conSonido = !conSonido;
+  const b = $("btnSonido"); b.textContent = conSonido ? "🔊" : "🔇";
+  b.setAttribute("aria-pressed", conSonido); b.title = b.ariaLabel = conSonido ? "Sonido activado" : "Sonido desactivado";
+  if (conSonido) SONIDO.colocar();
+};
+const banco = $("banco");
+let sel = null, arr = null, comprobado = false;
+
+function mezclar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function iniciar(){
+  banco.innerHTML = ""; document.querySelectorAll(".dentro").forEach(d => d.innerHTML = "");
+  mezclar(TARJETAS).forEach(c => {
+    const b = document.createElement("button");
+    b.className = "tarjeta"; b.dataset.cat = c.cat;
+    b.innerHTML = `<span>${c.t}</span><span class="m" aria-hidden="true"></span>`;
+    b.addEventListener("pointerdown", bajar);
+    b.addEventListener("keydown", e => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); elegir(b); } });
+    banco.appendChild(b);
+  });
+  comprobado = false; sel = null;
+  $("capa").hidden = true; $("btnVer").hidden = true;
+  $("btnComprobar").textContent = "Comprobar";
+  $("estado").innerHTML = "Arrastrá una tarjeta o tocala y después tocá el contenedor.";
+  actualizar();
+}
+
+function tarjetas(){ return [...document.querySelectorAll(".tarjeta")]; }
+
+function actualizar(){
+  const enBanco = banco.children.length;
+  banco.classList.toggle("vacio", enBanco === 0);
+  ["mercado","shopping","ambos"].forEach(c => {
+    const n = document.querySelector(`.caja.${c} .dentro`).children.length;
+    $("n-"+c).textContent = n ? n : "";
+  });
+  $("btnComprobar").disabled = !comprobado && enBanco > 0;
+  if (!comprobado) $("estado").innerHTML = enBanco > 0
+    ? `Faltan <b>${enBanco}</b> tarjetas por ubicar.`
+    : "¡Ubicaste todas! Ahora comprobá.";
+}
+
+/* Selección por toque */
+function elegir(b){
+  if (b.classList.contains("bien")) return;
+  if (sel === b){ desmarcar(); return; }
+  desmarcar(); sel = b; b.classList.add("sel"); SONIDO.levantar();
+  document.querySelectorAll(".caja").forEach(c => c.classList.add("destino"));
+}
+function desmarcar(){
+  if (sel) sel.classList.remove("sel");
+  sel = null; document.querySelectorAll(".caja").forEach(c => c.classList.remove("destino"));
+}
+document.querySelectorAll(".caja").forEach(c => c.addEventListener("click", () => {
+  if (sel) { soltarEn(sel, c); desmarcar(); }
+}));
+banco.addEventListener("click", e => {
+  if (sel && e.target === banco) { banco.appendChild(sel); SONIDO.colocar(); limpiarMarca(sel); desmarcar(); actualizar(); }
+});
+
+/* Arrastre con puntero */
+function bajar(e){
+  const b = e.currentTarget;
+  if (b.classList.contains("bien")) return;
+  e.preventDefault();
+  b.setPointerCapture(e.pointerId);
+  const r = b.getBoundingClientRect();
+  arr = { b, x0:e.clientX, y0:e.clientY, dx:e.clientX-r.left, dy:e.clientY-r.top, w:r.width, movio:false };
+  b.addEventListener("pointermove", mover);
+  b.addEventListener("pointerup", subir);
+  b.addEventListener("pointercancel", cancelar);
+}
+function mover(e){
+  if (!arr) return;
+  const { b } = arr;
+  if (!arr.movio && Math.hypot(e.clientX-arr.x0, e.clientY-arr.y0) > 6){
+    arr.movio = true; desmarcar(); SONIDO.levantar();
+    b.style.width = arr.w + "px"; b.classList.add("flotando");
+  }
+  if (!arr.movio) return;
+  b.style.left = (e.clientX - arr.dx) + "px"; b.style.top = (e.clientY - arr.dy) + "px";
+  const caja = cajaEn(e.clientX, e.clientY);
+  document.querySelectorAll(".caja").forEach(c => c.classList.toggle("encima", c === caja));
+}
+function subir(e){
+  const a = arr; terminar();
+  if (!a) return;
+  if (!a.movio){
+    // con una tarjeta elegida, tocar otra que ya está en un contenedor = soltar en ese contenedor
+    const caja = a.b.closest(".caja");
+    if (sel && sel !== a.b && caja){ const s = sel; desmarcar(); soltarEn(s, caja); return; }
+    elegir(a.b); return;
+  }
+  const caja = cajaEn(e.clientX, e.clientY);
+  if (caja) soltarEn(a.b, caja);
+  else if (enBanco(e.clientX, e.clientY)) { banco.appendChild(a.b); SONIDO.colocar(); limpiarMarca(a.b); actualizar(); }
+}
+function cancelar(){ terminar(); }
+function terminar(){
+  if (!arr) return;
+  const b = arr.b;
+  b.classList.remove("flotando"); b.style.left = b.style.top = b.style.width = "";
+  b.removeEventListener("pointermove", mover); b.removeEventListener("pointerup", subir); b.removeEventListener("pointercancel", cancelar);
+  document.querySelectorAll(".caja").forEach(c => c.classList.remove("encima"));
+  arr = null;
+}
+function cajaEn(x,y){
+  return [...document.querySelectorAll(".caja")].find(c => { const r=c.getBoundingClientRect(); return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom; });
+}
+function enBanco(x,y){ const r = banco.getBoundingClientRect(); return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom; }
+
+function soltarEn(b, caja){
+  caja.querySelector(".dentro").appendChild(b);
+  SONIDO.colocar();
+  limpiarMarca(b);
+  actualizar();
+}
+function limpiarMarca(b){
+  if (b.classList.contains("mal")){ b.classList.remove("mal"); b.querySelector(".m").textContent = ""; }
+  if (comprobado && !document.querySelector(".tarjeta.mal")) estadoComprobado();
+}
+
+/* Comprobar */
+$("btnComprobar").onclick = () => {
+  if (comprobado && document.querySelector(".tarjeta.mal")) { reubicarErrores(); return; }
+  if (banco.children.length) return;
+  comprobado = true;
+  tarjetas().forEach(b => {
+    const cat = b.closest(".caja")?.dataset.cat;
+    const ok = cat === b.dataset.cat;
+    b.classList.toggle("bien", ok); b.classList.toggle("mal", !ok);
+    b.querySelector(".m").textContent = ok ? "✓" : "✗";
+  });
+  estadoComprobado();
+};
+function aciertos(){ return tarjetas().filter(b => b.classList.contains("bien")).length; }
+function estadoComprobado(){
+  const n = aciertos(), total = TARJETAS.length, malas = document.querySelectorAll(".tarjeta.mal").length;
+  $("btnVer").hidden = n !== total;
+  if (n === total){
+    $("estado").innerHTML = "<b>¡Lograste 10 de 10!</b> Mirá la devolución.";
+    $("btnComprobar").hidden = true;
+    $("btnVer").className = "btn am";
+  } else {
+    $("estado").innerHTML = `<b>Lograste ${n} de ${total}.</b> ` + (malas ? "Mové las rojas y volvé a comprobar." : "Volvé a comprobar.");
+    $("btnComprobar").hidden = false;
+    $("btnComprobar").disabled = false;
+    $("btnComprobar").textContent = malas ? "Volver a intentar" : "Comprobar";
+    $("btnVer").className = "btn sec";
+  }
+}
+function reubicarErrores(){
+  const malas = [...document.querySelectorAll(".tarjeta.mal")];
+  if (malas.length){
+    // las incorrectas vuelven al banco para reubicarlas
+    malas.forEach(b => { b.classList.remove("mal"); b.querySelector(".m").textContent = ""; banco.appendChild(b); });
+    $("estado").innerHTML = `<b>Lograste ${aciertos()} de ${TARJETAS.length}.</b> Ubicá de nuevo las que volvieron arriba.`;
+    $("btnComprobar").textContent = "Comprobar";
+    comprobado = false; actualizar();
+    // las correctas quedan fijas
+    return;
+  }
+}
+$("btnVer").onclick = () => {
+  const n = aciertos();
+  $("finSub").textContent = `Lograste ${n} de ${TARJETAS.length}.`;
+  ["mercado","shopping","ambos"].forEach(c => {
+    $("g-"+c).innerHTML = TARJETAS.filter(x => x.cat === c).map(x => `<li><i>${x.t}.</i> ${x.r}</li>`).join("");
+  });
+  $("capa").hidden = false;
+  document.querySelector(".final").scrollTop = 0;
+  $("btnCerrar").focus({ preventScroll: true });
+};
+$("btnCerrar").onclick = () => { $("capa").hidden = true; };
+$("btnReiniciar").onclick = iniciar;
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("capa").hidden = true; desmarcar(); } });
+
+iniciar();
+</script>
+</body>
+</html>
