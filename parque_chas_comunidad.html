@@ -1,0 +1,164 @@
+<!-- Bloque D4 · Actividad 2 · Parque Chas: un barrio que sus vecinos defendieron (fuelle interactivo) -->
+<link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<div class="pcf">
+  <style>
+    .pcf{--celeste:#8DE2D6;--azul:#035C80;--amarillo:#FFCD02;--marino:#1D3343;--azul-claro:#E3EFF5;--fondo:#F4F7F8;
+      font-family:'Encode Sans',Arial,sans-serif;color:var(--marino);background:var(--fondo);border:1px solid #DCE5EA;border-radius:12px;overflow:hidden;max-width:1050px;margin:0 auto;box-sizing:border-box}
+    .pcf *{box-sizing:border-box}
+    .pcf-bar{display:flex;height:5px}.pcf-bar span{flex:1}
+    .pcf-in{padding:16px 14px 18px}
+    @media(min-width:700px){.pcf-in{padding:18px 22px 22px}}
+    .pcf h3{margin:0;font-size:20px;font-weight:800;line-height:1.25;color:var(--marino)}
+    .pcf h3 em{font-style:normal;color:var(--azul)}
+    .pcf-sub{margin:4px 0 14px;font-size:13px;color:#4A5B66}
+
+    /* Fuelle */
+    .pcf-fuelle{display:flex;gap:6px;height:340px}
+    .pcf-p{position:relative;flex:0 0 64px;border-radius:10px;overflow:hidden;transition:flex .45s ease;background:var(--azul);display:flex}
+    .pcf-p:nth-child(even){background:var(--marino)}
+    .pcf-p.on{flex:1 1 auto;background:#fff;border:1px solid #C9DCE6;border-top:5px solid var(--amarillo)}
+    .pcf-tab{all:unset;box-sizing:border-box;cursor:pointer;flex:0 0 64px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:12px;font-family:inherit;color:#fff}
+    .pcf-tab:focus-visible{outline:3px solid var(--amarillo);outline-offset:-3px}
+    .pcf-year{font-weight:800;font-size:14px;color:var(--amarillo);white-space:nowrap}
+    .pcf-tt{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;font-size:14px;white-space:nowrap}
+    .pcf-p.on .pcf-tab{color:var(--marino);background:var(--azul-claro)}
+    .pcf-p.on .pcf-year{color:var(--azul)}
+    .pcf-body{flex:1;min-width:0;padding:20px 22px;opacity:0;visibility:hidden;transition:opacity .3s ease .15s;overflow:auto}
+    .pcf-p.on .pcf-body{opacity:1;visibility:visible}
+    .pcf-kicker{display:inline-block;background:var(--amarillo);color:var(--marino);font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:8px}
+    .pcf-body h4{margin:0 0 10px;font-size:19px;font-weight:800;color:var(--azul);line-height:1.25}
+    .pcf-body p{margin:0 0 10px;font-size:14.5px;line-height:1.6;min-width:260px}
+    .pcf-body strong{color:var(--azul)}
+    .pcf-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+    .pcf-chips span{background:var(--azul-claro);color:var(--azul);font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+    .pcf-steps{list-style:none;margin:0;padding:0}
+    .pcf-steps li{display:flex;gap:10px;margin-bottom:9px;font-size:14px;line-height:1.5}
+    .pcf-steps b{flex:none;background:var(--celeste);color:var(--marino);border-radius:6px;padding:1px 8px;font-size:12.5px;height:fit-content;margin-top:1px}
+    .pcf-quote{border-left:4px solid var(--celeste);background:var(--fondo);padding:8px 12px;border-radius:0 8px 8px 0;font-style:italic;font-size:14px;margin:6px 0 0}
+
+    /* Navegación */
+    .pcf-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;background:#fff;border:1px solid #DCE5EA;border-radius:10px;padding:8px 12px}
+    .pcf-nav button{all:unset;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:#fff;background:var(--azul);padding:7px 14px;border-radius:8px;white-space:nowrap}
+    .pcf-nav button:disabled{opacity:.35;cursor:default}
+    .pcf-nav button:focus-visible{outline:3px solid var(--amarillo)}
+    .pcf-dots{display:flex;gap:6px}
+    .pcf-dots i{width:9px;height:9px;border-radius:50%;background:#D3DDE3}
+    .pcf-dots i.on{background:var(--amarillo);width:22px;border-radius:5px}
+    .pcf-src{margin-top:10px;font-size:11.5px;color:#4A5B66;line-height:1.5}
+    .pcf-src a{color:var(--azul)}
+
+    /* Celular: el fuelle se apila */
+    @media(max-width:699px){
+      .pcf-fuelle{flex-direction:column;height:auto}
+      .pcf-p{flex:none;flex-direction:column}
+      .pcf-p.on{flex:none}
+      .pcf-tab{flex:none;flex-direction:row;justify-content:flex-start;padding:12px 14px;gap:12px;width:100%}
+      .pcf-tt{writing-mode:horizontal-tb;transform:none;white-space:normal}
+      .pcf-body{display:none;padding:14px 16px 16px}
+      .pcf-p.on .pcf-body{display:block}
+      .pcf-body p{min-width:0}
+    }
+  </style>
+
+  <div class="pcf-bar"><span style="background:#8DE2D6"></span><span style="background:#035C80"></span><span style="background:#FFCD02"></span><span style="background:#1D3343"></span></div>
+  <div class="pcf-in">
+    <h3>Un barrio que sus <em>vecinos defendieron</em></h3>
+    <p class="pcf-sub">Abrí cada pliegue del fuelle para recorrer cómo Parque Chas llegó a ser barrio.</p>
+
+    <div class="pcf-fuelle">
+      <div class="pcf-p on">
+        <button class="pcf-tab" aria-expanded="true"><span class="pcf-year">1925</span><span class="pcf-tt">Nace el trazado</span></button>
+        <div class="pcf-body">
+          <span class="pcf-kicker">1925</span>
+          <h4>Un barrio distinto desde el plano</h4>
+          <p>El Concejo Deliberante aprobó el trazado propuesto por <strong>Vicente Chas</strong>, dueño de esas tierras. Los ingenieros <strong>Frehner y Guerrico</strong> lo diseñaron inspirados en las “ciudades jardín” inglesas.</p>
+          <p>Combinaron <strong>calles circulares</strong> con manzanas en ángulo recto. Ese diseño, único en la Ciudad, es el que hoy hace que tanta gente se pierda en sus calles.</p>
+        </div>
+      </div>
+
+      <div class="pcf-p">
+        <button class="pcf-tab" aria-expanded="false"><span class="pcf-year">1933</span><span class="pcf-tt">Calles con nombre</span></button>
+        <div class="pcf-body">
+          <span class="pcf-kicker">1933</span>
+          <h4>Un mapa con nombres del mundo</h4>
+          <p>Muchas calles nuevas no tenían nombre. En 1933, una ordenanza les asignó nombres de <strong>ciudades europeas</strong>:</p>
+          <div class="pcf-chips"><span>Ginebra</span><span>La Haya</span><span>Dublín</span><span>Tréveris</span><span>Turín</span><span>Moscú</span><span>Belgrado</span><span>Bucarest</span></div>
+        </div>
+      </div>
+
+      <div class="pcf-p">
+        <button class="pcf-tab" aria-expanded="false"><span class="pcf-year">1976</span><span class="pcf-tt">Barrio por meses</span></button>
+        <div class="pcf-body">
+          <span class="pcf-kicker">1976</span>
+          <h4>Un reconocimiento que duró poco</h4>
+          <p>A comienzos de 1976, una ordenanza del Concejo Deliberante reconoció a Parque Chas como barrio. Lo hizo respondiendo a <strong>un pedido de los vecinos</strong>, que querían un barrio propio.</p>
+          <p>Después del golpe de Estado, el intendente de facto <strong>Osvaldo Cacciatore</strong> anuló esa ordenanza. Parque Chas volvió a formar parte de <strong>Agronomía</strong>.</p>
+        </div>
+      </div>
+
+      <div class="pcf-p">
+        <button class="pcf-tab" aria-expanded="false"><span class="pcf-year">1999</span><span class="pcf-tt">Los vecinos se organizan</span></button>
+        <div class="pcf-body">
+          <span class="pcf-kicker">1999 – 2004</span>
+          <h4>Años de organización vecinal</h4>
+          <ul class="pcf-steps">
+            <li><b>1999</b><span>Los vecinos fundan una <strong>Asociación de Amigos</strong> para pedir que el barrio vuelva a ser reconocido.</span></li>
+            <li><b>2001</b><span>La <strong>Junta de Estudios Históricos de Agronomía y Parque Chas</strong> entrega un petitorio a legisladores para anular la ordenanza de 1976.</span></li>
+            <li><b>2004</b><span>Se forma la <strong>Asociación Amigos del Barrio Parque Chas</strong> para fortalecer el reclamo.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pcf-p">
+        <button class="pcf-tab" aria-expanded="false"><span class="pcf-year">2005</span><span class="pcf-tt">La Ley 1907</span></button>
+        <div class="pcf-body">
+          <span class="pcf-kicker">6 de diciembre de 2005</span>
+          <h4>Parque Chas vuelve a ser barrio</h4>
+          <p>La Legislatura porteña sancionó la <strong>Ley 1907</strong>, que <strong>restituyó a Parque Chas su carácter de barrio</strong>. Fue el último barrio de la Ciudad en conformarse.</p>
+          <p class="pcf-quote">“Después de muchos años de lucha parece cumplirse el sueño de los vecinos que quisieron ser autónomos y lo lograron.” — Canal 26, enero de 2006</p>
+        </div>
+      </div>
+
+      <div class="pcf-p">
+        <button class="pcf-tab" aria-expanded="false"><span class="pcf-year">Hoy</span><span class="pcf-tt">Un barrio que se celebra</span></button>
+        <div class="pcf-body">
+          <span class="pcf-kicker">Hoy</span>
+          <h4>Una identidad que se sigue construyendo</h4>
+          <p>Desde 2006, cada <strong>29 de septiembre</strong> se celebra el Día del Barrio, en recuerdo de la aprobación del trazado original.</p>
+          <p>En 2025, Parque Chas cumplió <strong>100 años</strong>. Vecinos e instituciones lo festejaron con visitas guiadas, música y encuentros de lectura, y con un libro que reúne fotos históricas, planos antiguos y <strong>relatos orales</strong> de sus habitantes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcf-nav">
+      <button class="pcf-prev" disabled>← Anterior</button>
+      <div class="pcf-dots"></div>
+      <button class="pcf-next">Siguiente →</button>
+    </div>
+
+    <p class="pcf-src">Fuentes: Gobierno de la Ciudad de Buenos Aires, <a href="https://buenosaires.gob.ar/laciudad/barrios/parque-chas" target="_blank" rel="noopener">“Parque Chas”</a> · Canal 26, <a href="https://www.canal26.com/general/2006/01/27/parque-chas-ya-es-barrio-oficial-de-la-capital-federal/" target="_blank" rel="noopener">“Parque Chas ya es barrio oficial de la Capital Federal”</a> (2006) · InfoAgronomía, <a href="https://infoagronomia.com.ar/parque-chas-cien-anos-de-un-laberinto-porteno-que-late-con-identidad-propia" target="_blank" rel="noopener">“Parque Chas: cien años de un laberinto porteño”</a> (2025).</p>
+  </div>
+
+  <script>
+    (function(){
+      var root=document.currentScript.closest('.pcf');
+      var ps=[].slice.call(root.querySelectorAll('.pcf-p'));
+      var dots=root.querySelector('.pcf-dots'), prev=root.querySelector('.pcf-prev'), next=root.querySelector('.pcf-next');
+      ps.forEach(function(){dots.appendChild(document.createElement('i'));});
+      var cur=0;
+      function go(i){
+        cur=i;
+        ps.forEach(function(p,k){
+          p.classList.toggle('on',k===i);
+          p.querySelector('.pcf-tab').setAttribute('aria-expanded',k===i);
+          dots.children[k].classList.toggle('on',k===i);
+        });
+        prev.disabled=i===0; next.disabled=i===ps.length-1;
+      }
+      ps.forEach(function(p,k){p.querySelector('.pcf-tab').addEventListener('click',function(){go(k);});});
+      prev.addEventListener('click',function(){if(cur>0)go(cur-1);});
+      next.addEventListener('click',function(){if(cur<ps.length-1)go(cur+1);});
+      go(0);
+    })();
+  </script>
+</div>
