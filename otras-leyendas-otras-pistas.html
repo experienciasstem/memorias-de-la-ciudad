@@ -1,0 +1,121 @@
+<!-- D4 · Actividad 5 · Otras leyendas, otras pistas -->
+<link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>html,body{margin:0;padding:0}</style>
+<div class="olp">
+  <style>
+    .olp{--celeste:#8DE2D6;--azul:#035C80;--amarillo:#FFCD02;--marino:#1D3343;--azul-claro:#E3EFF5;--amarillo-claro:#FFF8DC;--fondo:#F4F7F8;
+      font-family:'Encode Sans',Arial,sans-serif;color:var(--marino);background:var(--fondo);border:1px solid #DCE5EA;border-radius:12px;overflow:hidden;width:100%;margin:0;box-sizing:border-box}
+    .olp *{box-sizing:border-box}
+    .olp-bar{display:flex;height:6px}.olp-bar span{flex:1}
+    .olp-in{padding:18px 16px 20px}
+    @media(min-width:700px){.olp-in{padding:24px 28px 28px}}
+    .olp h3{margin:0 0 14px;font-size:20px;font-weight:800;line-height:1.25}
+    .olp h3 em{font-style:normal;color:var(--azul)}
+
+    /* Casos */
+    .olp-cases{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-bottom:14px}
+    @media(min-width:760px){.olp-cases{grid-template-columns:repeat(4,1fr)}}
+    .olp-case{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;border:1px solid #DCE5EA;border-top:5px solid var(--azul);border-radius:10px;padding:14px 16px;font-family:inherit;display:flex;flex-direction:column;gap:5px;transition:box-shadow .15s,transform .15s}
+    .olp-case:hover{box-shadow:0 3px 10px rgba(29,51,67,.12)}
+    .olp-case:focus-visible{outline:3px solid var(--amarillo);outline-offset:1px}
+    .olp-case b{font-size:17px;font-weight:800;line-height:1.3;color:var(--marino)}
+    .olp-case span{font-size:14px;font-weight:600;color:#4A5B66}
+    .olp-case[aria-selected="true"]{background:var(--azul);border-color:var(--azul);border-top-color:var(--amarillo)}
+    .olp-case[aria-selected="true"] b,.olp-case[aria-selected="true"] span{color:#fff}
+
+    /* Panel del caso */
+    .olp-panel{background:#fff;border:1px solid #DCE5EA;border-radius:10px;padding:16px 14px}
+    @media(min-width:700px){.olp-panel{padding:24px 28px}}
+    .olp-panel[hidden]{display:none}
+    .olp-tag{display:inline-block;background:var(--amarillo);color:var(--marino);font-size:14px;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:8px}
+    .olp-panel h4{margin:0 0 12px;font-size:26px;font-weight:800;color:var(--azul);line-height:1.25}
+    .olp-relato{font-size:18px;line-height:1.7;margin:0}
+    .olp-care{background:var(--amarillo-claro);border:1px solid #F3E2A0;border-left:4px solid var(--amarillo);border-radius:8px;padding:9px 12px;font-size:13.5px;line-height:1.5;margin:0 0 14px}
+
+    /* Pistas */
+    .olp-head{background:var(--azul);color:#fff;font-weight:700;font-size:14px;padding:9px 14px;border-radius:8px;margin-bottom:8px}
+    .olp-layers{display:grid;gap:8px}
+    @media(min-width:700px){.olp-layers{grid-template-columns:1fr 1fr}}
+    .olp-l{all:unset;box-sizing:border-box;cursor:pointer;font-family:inherit;border-radius:8px;border:1px solid #DCE5EA;border-left:5px solid var(--c);background:var(--fondo);padding:10px 12px;display:block;min-height:64px}
+    .olp-l:focus-visible{outline:3px solid var(--amarillo)}
+    .olp-l .k{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.02em}
+    .olp-l .k i{width:11px;height:11px;border-radius:50%;background:var(--c);flex:none}
+    .olp-l .v{display:none;margin-top:6px;font-size:14px;line-height:1.5}
+    .olp-l .h{display:block;margin-top:6px;font-size:12.5px;color:#7A8A94;font-weight:600}
+    .olp-l.open{background:#fff;cursor:default}
+    .olp-l.open .v{display:block}
+    .olp-l.open .h{display:none}
+    .olp-l[data-k="lugar"]{--c:#1D3343}
+    .olp-l[data-k="dato"]{--c:#035C80}
+    .olp-l[data-k="version"]{--c:#FFCD02}
+    .olp-l[data-k="ficcion"]{--c:#8DE2D6}
+    .olp-tools{display:flex;justify-content:flex-end;margin-top:10px}
+    .olp-all{all:unset;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:#fff;background:var(--azul);padding:7px 14px;border-radius:8px}
+    .olp-all:focus-visible{outline:3px solid var(--amarillo)}
+    .olp-src{margin:16px 0 0;font-size:14px;color:#4A5B66;line-height:1.5}
+    .olp-src a{color:var(--azul)}
+  </style>
+
+  <div class="olp-bar"><span style="background:#8DE2D6"></span><span style="background:#035C80"></span><span style="background:#FFCD02"></span><span style="background:#1D3343"></span></div>
+  <div class="olp-in">
+    <div class="olp-cases" role="tablist"></div>
+    <div class="olp-panels"></div>
+  </div>
+
+  <script>
+    (function(){
+      var root=document.currentScript.closest('.olp');
+      var TB='https://turismo.buenosaires.gob.ar/es/article/3-leyendas-urbanas-de-buenos-aires';
+      var CASES=[
+        {t:'El monstruo de la Reserva',b:'Costanera Sur',
+         r:'En la Reserva Ecológica Costanera Sur, a pasos de Puerto Madero, hay lagunas, pastizales y senderos donde viven muchas especies. Desde 1986, cuando la reserva abrió, algunos visitantes aseguran haber visto un animal del tamaño de un perro, con aspecto de rata. Lo llaman “Reservito”. Hay quienes creen que es un coipo muy grande. Otros cuentan que se alimenta de carne humana, que persigue a quienes caminan solos y que aparece y desaparece sin dejar rastro. Varios grupos salieron a buscarlo, pero nadie logró encontrarlo.',
+         L:{lugar:'La Reserva Ecológica Costanera Sur, frente a Puerto Madero.',
+            dato:'Es un área natural de unas 350 hectáreas. En sus humedales vive el coipo, un roedor de gran tamaño parecido a una nutria.',
+            version:'Visitantes dicen haber visto un animal del tamaño de un perro, con rasgos de rata. Podría ser posible, pero nunca se comprobó.',
+            ficcion:'Un monstruo que come carne humana, persigue a la gente y aparece y desaparece sin dejar rastro.'},
+         s:[['Turismo Buenos Aires, “3 leyendas urbanas de Buenos Aires”',TB]]},
+        {t:'La maldición de Ingeniería',b:'Recoleta',
+         r:'Sobre la avenida Las Heras se levanta un enorme edificio de estilo neogótico: la Facultad de Ingeniería de la UBA. Su construcción comenzó en 1912, dirigida por el ingeniero Arturo Prins, y se detuvo en 1938. Nunca se terminó como estaba proyectado. ¿Por qué? Algunos dicen que costaba más de lo previsto. Otros, que había un error de cálculo y el edificio podía derrumbarse. Y hay quienes hablan de una maldición: todo el que intenta terminarlo, fracasa.',
+         L:{lugar:'El edificio de la Facultad de Ingeniería (UBA), sobre la avenida Las Heras, en Recoleta.',
+            dato:'La obra comenzó en 1912, a cargo del ingeniero Arturo Prins, y se detuvo en 1938. El edificio sigue inconcluso.',
+            version:'Que la obra se frenó por un error de cálculo en los planos, o porque superó el presupuesto. Se repite, pero no está comprobado.',
+            ficcion:'Una maldición que hace fracasar a cualquiera que intente terminar el edificio.'},
+         s:[['Turismo Buenos Aires, “3 leyendas urbanas de Buenos Aires”',TB]]},
+        {t:'La Dama de Blanco',b:'Recoleta',
+         care:'Este caso habla de una persona real. Lo documentado es quién fue, cuándo murió y cómo es su tumba. Todo lo demás pertenece a la leyenda.',
+         r:'En el Cementerio de la Recoleta hay una bóveda que muchos visitantes buscan: la de Rufina Cambaceres, hija del escritor Eugenio Cambaceres. Rufina murió de manera repentina en 1902, a los 19 años. Su madre mandó construir una bóveda de estilo art nouveau, con una escultura de la joven apoyada en la puerta. Con el tiempo, la historia se transformó en leyenda: se dice que había sufrido un ataque de catalepsia y que fue sepultada con vida. Y algunos vecinos aseguran ver, de madrugada, a una mujer vestida de blanco detrás de las rejas del cementerio.',
+         L:{lugar:'El Cementerio de la Recoleta y la bóveda de la familia Cambaceres.',
+            dato:'Rufina Cambaceres, hija del escritor Eugenio Cambaceres, murió en 1902 a los 19 años. Su bóveda art nouveau, con una escultura de la joven, se puede visitar.',
+            version:'Que tuvo un ataque de catalepsia y fue enterrada viva, y que su ataúd apareció desplazado y con marcas. Se repite en muchos sitios, pero nunca se comprobó.',
+            ficcion:'Una mujer vestida de blanco que aparece de madrugada detrás de las rejas del cementerio.'},
+         s:[['Biblioteca del Congreso de la Nación, “Leyendas y mitos urbanos”','https://bcn.gob.ar/uploads/LeyendasyMitosUrbanos.pdf'],['Crónica, “La enterraron el día de su cumpleaños”','https://www.cronica.com.ar/paranormal/la-enterraron-el-dia-de-su-cumpleanos-la-escalofriante-historia-detras-de-la-tumba-mas-famosa-de-la-recoleta/']]},
+        {t:'La dama de Barracas',b:'Barracas',
+         care:'Este caso habla de una persona real. Lo documentado es su vida, su muerte y la iglesia. Las apariciones pertenecen a la leyenda.',
+         r:'Frente a la Plaza Colombia, en Barracas, está la Iglesia de Santa Felicitas. Lleva el nombre de Felicitas Guerrero, una joven viuda que fue asesinada el 30 de enero de 1872 por Enrique Ocampo, un pretendiente al que había rechazado. Sus padres construyeron la iglesia en su memoria y adentro hay esculturas de Felicitas y de su familia. Desde entonces circulan historias: que tocar la reja de la iglesia ayuda a recuperar un amor perdido, que cada 30 de enero su fantasma aparece vestido de blanco y que un pañuelo atado a las rejas amanece mojado con sus lágrimas.',
+         L:{lugar:'La Iglesia de Santa Felicitas, frente a la Plaza Colombia, en Barracas.',
+            dato:'Felicitas Guerrero fue asesinada el 30 de enero de 1872 por Enrique Ocampo. Sus padres construyeron la iglesia en su memoria, con esculturas de ella y su familia.',
+            version:'Que tocar la reja de la iglesia ayuda a recuperar un amor perdido. Es una creencia que pasa de boca en boca.',
+            ficcion:'Un fantasma que aparece cada 30 de enero y un pañuelo que amanece mojado con sus lágrimas.'},
+         s:[['Gobierno de la Ciudad, “Historias de mi comuna: Iglesia Santa Felicitas”','https://buenosaires.gob.ar/noticias/historias-de-mi-comuna-iglesia-capilla-santa-felicitas'],['Buenos Aires Connect, “Leyendas urbanas de Buenos Aires”','https://buenosairesconnect.com/leyendas-urbanas-de-buenos-aires/']]}
+      ];
+      var LAY=[['lugar','Lugar real'],['dato','Información verificable'],['version','Versión que circula'],['ficcion','Elemento ficcional']];
+      var casesEl=root.querySelector('.olp-cases'), panelsEl=root.querySelector('.olp-panels');
+      CASES.forEach(function(c,i){
+        var b=document.createElement('button');b.className='olp-case';b.setAttribute('role','tab');
+        b.innerHTML='<b>'+c.t+'</b><span>'+c.b+'</span>';
+        b.addEventListener('click',function(){show(i);});
+        casesEl.appendChild(b);
+        var p=document.createElement('div');p.className='olp-panel';p.hidden=true;
+        p.innerHTML='<span class="olp-tag">'+c.b+'</span><h4>'+c.t+'</h4>'+
+          '<p class="olp-relato">'+c.r+'</p>'+
+          '<p class="olp-src">Fuentes: '+c.s.map(function(s){return '<a href="'+s[1]+'" target="_blank" rel="noopener">'+s[0]+'</a>';}).join(' · ')+'</p>';
+        panelsEl.appendChild(p);
+      });
+      function show(i){
+        casesEl.querySelectorAll('.olp-case').forEach(function(b,k){b.setAttribute('aria-selected',k===i);});
+        panelsEl.querySelectorAll('.olp-panel').forEach(function(p,k){p.hidden=k!==i;});
+      }
+      show(0);
+    })();
+  </script>
+</div>
