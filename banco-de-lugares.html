@@ -1,0 +1,134 @@
+<!-- D5 · Actividad 1 · Banco de lugares (carrusel) -->
+<link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>html,body{margin:0;padding:0}</style>
+<div class="bdl">
+  <style>
+    .bdl{--celeste:#8DE2D6;--azul:#035C80;--amarillo:#FFCD02;--marino:#1D3343;--azul-claro:#E3EFF5;--fondo:#F4F7F8;
+      font-family:'Encode Sans',Arial,sans-serif;color:var(--marino);background:var(--fondo);border:1px solid #DCE5EA;border-radius:12px;overflow:hidden;width:100%;box-sizing:border-box}
+    .bdl *{box-sizing:border-box}
+    .bdl-bar{display:flex;height:6px}.bdl-bar span{flex:1}
+    .bdl-in{padding:16px 14px 18px}
+    @media(min-width:760px){.bdl-in{padding:22px 26px 24px}}
+
+    .bdl-stage{position:relative;overflow:hidden;border-radius:12px;background:#fff;border:1px solid #DCE5EA;touch-action:pan-y}
+    .bdl-track{display:flex;transition:transform .45s ease}
+    .bdl-slide{flex:0 0 100%;display:grid;grid-template-columns:1fr}
+    @media(min-width:760px){.bdl-slide{grid-template-columns:1.25fr 1fr;min-height:400px}}
+
+    .bdl-ph{position:relative;aspect-ratio:16/10;overflow:hidden;background:linear-gradient(135deg,var(--azul),var(--marino))}
+    @media(min-width:760px){.bdl-ph{aspect-ratio:auto;height:100%}}
+    .bdl-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+    .bdl-ph .ph{position:absolute;inset:0;display:flex;align-items:flex-end;padding:18px;font-weight:800;font-size:22px;color:#fff}
+    .bdl-barrio{position:absolute;left:14px;top:14px;background:var(--amarillo);color:var(--marino);font-size:14px;font-weight:800;padding:4px 12px;border-radius:20px;z-index:2}
+    .bdl-num{position:absolute;right:14px;top:14px;background:rgba(29,51,67,.8);color:#fff;font-size:13px;font-weight:700;padding:4px 10px;border-radius:20px;z-index:2}
+
+    .bdl-body{padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px}
+    @media(min-width:760px){.bdl-body{padding:28px 30px;justify-content:center}}
+    .bdl-body h4{margin:0;font-size:26px;font-weight:800;line-height:1.2;color:var(--azul)}
+    .bdl-dir{display:flex;align-items:center;gap:8px;font-size:15px;color:#4A5B66;font-weight:600}
+    .bdl-dir i{width:10px;height:10px;border-radius:50%;background:var(--amarillo);flex:none}
+    .bdl-pista{font-size:18px;line-height:1.6;margin:4px 0 8px;background:var(--fondo);border-left:5px solid var(--celeste);border-radius:0 8px 8px 0;padding:12px 14px}
+    .bdl-pista b{color:var(--azul)}
+    .bdl-btn{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;font-family:inherit;font-size:16px;font-weight:700;color:#fff;background:var(--azul);padding:12px 16px;border-radius:9px;align-self:flex-start}
+    .bdl-btn:focus-visible{outline:3px solid var(--amarillo)}
+    .bdl-slide.on .bdl-btn{background:var(--marino)}
+    .bdl-inv{display:none;flex-wrap:wrap;gap:8px}
+    .bdl-slide.on .bdl-inv{display:flex}
+    .bdl-inv a{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:var(--azul);background:var(--azul-claro);padding:9px 12px;border-radius:8px;text-decoration:none}
+    .bdl-inv a:hover{background:#D3E6EF}
+    .bdl-inv a i{width:10px;height:10px;border-radius:50%;background:var(--azul);flex:none}
+    .bdl-inv a:nth-child(2) i{background:var(--amarillo)}
+
+    .bdl-arrow{all:unset;position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.95);box-shadow:0 2px 10px rgba(29,51,67,.25);cursor:pointer;display:grid;place-items:center}
+    .bdl-arrow::before{content:"";width:11px;height:11px;border-right:3px solid var(--azul);border-bottom:3px solid var(--azul)}
+    .bdl-prev{left:10px}.bdl-prev::before{transform:rotate(135deg);margin-left:5px}
+    .bdl-next{right:10px}.bdl-next::before{transform:rotate(-45deg);margin-right:5px}
+    .bdl-arrow:focus-visible{outline:3px solid var(--amarillo)}
+    @media(max-width:759px){.bdl-arrow{top:calc((100vw - 30px) * .31)}}
+
+    .bdl-nav{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin-top:14px}
+    .bdl-nav button{all:unset;cursor:pointer;width:10px;height:10px;border-radius:50%;background:#C9D3D9;transition:width .2s}
+    .bdl-nav button.on{background:var(--amarillo);width:26px;border-radius:6px}
+    .bdl-nav button:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+    .bdl-credit{margin:10px 0 0;text-align:right;font-size:12px;color:#7A8A94}
+  </style>
+
+  <div class="bdl-bar"><span style="background:#8DE2D6"></span><span style="background:#035C80"></span><span style="background:#FFCD02"></span><span style="background:#1D3343"></span></div>
+  <div class="bdl-in">
+    <div class="bdl-stage">
+      <div class="bdl-track"></div>
+      <button class="bdl-arrow bdl-prev" aria-label="Lugar anterior"></button>
+      <button class="bdl-arrow bdl-next" aria-label="Lugar siguiente"></button>
+    </div>
+    <div class="bdl-nav"></div>
+    <p class="bdl-credit">Fotos: Turismo Buenos Aires</p>
+  </div>
+
+  <script>
+    (function(){
+      var root=document.currentScript.closest('.bdl');
+      var F='https://turismo.buenosaires.gob.ar/sites/turismo/files/';
+      var L=[
+        {n:'Palacio de Aguas Corrientes',b:'Balvanera',d:'Av. Córdoba 1950',img:F+'palacio-de-aguas-980.jpg',
+         p:'Por fuera parece un palacio, pero <b>por dentro guarda enormes tanques de agua</b>.',w:'Palacio de Aguas Corrientes'},
+        {n:'Usina del Arte',b:'La Boca',d:'Agustín R. Caffarena 1',img:F+'usina-del-arte-fachada-1500x610_0.jpg',
+         p:'<b>Antes fue una usina eléctrica</b>; hoy es un centro cultural con salas de concierto.',w:'Usina del Arte'},
+        {n:'Puente Transbordador',b:'La Boca',d:'Av. Pedro de Mendoza y Almirante Brown',img:F+'puente-transbordador-nicolas-avellaneda1500x610.jpg',
+         p:'No tenía calzada fija: <b>una plataforma colgante cruzaba</b> el Riachuelo con personas y carros.',w:'Puente Transbordador Nicolás Avellaneda'},
+        {n:'Mercado de San Telmo',b:'San Telmo',d:'Defensa 961',img:F+'mercado_san_telmo_1200_1.jpg',
+         p:'<b>Funciona como mercado desde 1897</b>, bajo una gran estructura de hierro.',w:'Mercado de San Telmo'},
+        {n:'Estación Retiro Mitre',b:'Retiro',d:'Av. Ramos Mejía 1302',img:F+'retiro_980___0.jpg',
+         p:'Su estructura metálica <b>se fabricó en Inglaterra</b> y se armó en Buenos Aires.',w:'Estación Retiro Mitre'},
+        {n:'Palacio Barolo',b:'Monserrat',d:'Av. de Mayo 1370',img:F+'n_barolo1200_0.jpg',
+         p:'Su diseño <b>se inspira en la Divina Comedia</b> y en la cúpula tiene un faro.',w:'Palacio Barolo'},
+        {n:'Galerías Pacífico',b:'San Nicolás',d:'Florida 753',img:F+'field/image/galerias_pacifico1200.jpg',
+         p:'<b>Cambió de función varias veces</b>; su cúpula está pintada con murales de artistas argentinos.',w:'Galerías Pacífico'},
+        {n:'Palacio Libertad',b:'San Nicolás',d:'Sarmiento 151',img:F+'cck1500x610-fachada.jpg',
+         p:'<b>Antes fue el Palacio de Correos y Telégrafos</b>; hoy es un centro cultural que <b>ya cambió de nombre más de una vez</b>.',w:'Palacio Libertad Buenos Aires'},
+        {n:'Planetario Galileo Galilei',b:'Palermo',d:'Av. Sarmiento y Belisario Roldán',img:F+'planetario_soleado_1200_1.jpg',
+         p:'Su edificio, <b>apoyado sobre tres patas</b>, parece una nave a punto de despegar.',w:'Planetario Galileo Galilei'},
+        {n:'Torre Espacial',b:'Villa Soldati',d:'Parque de la Ciudad, Av. Escalada y Av. Fernández de la Cruz',img:F+'torre_parque_de_la_ciudad_1200.jpg',
+         p:'<b>Fue parte de un gran parque de diversiones</b> que dejó de funcionar.',w:'Parque de la Ciudad (Buenos Aires)'},
+        {n:'Cementerio de la Chacarita',b:'Chacarita',d:'Guzmán 680',img:F+'cementerio-chacarita-acceso-1500x610.png',
+         p:'<b>Se creó en 1871</b>, durante la epidemia de fiebre amarilla.',w:'Cementerio de la Chacarita'},
+        {n:'Docks de Puerto Madero',b:'Puerto Madero',d:'Av. Alicia Moreau de Justo',img:F+'vista_general_madero_1200_gastro_0.jpg',
+         p:'<b>Sus depósitos de ladrillo eran parte del puerto</b>; hoy son oficinas y restaurantes.',w:'Puerto Madero'}
+      ];
+      var track=root.querySelector('.bdl-track'), nav=root.querySelector('.bdl-nav'), stage=root.querySelector('.bdl-stage');
+      var cur=0, N=L.length;
+      L.forEach(function(l,i){
+        var maps='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(l.n+', '+l.d+', Buenos Aires');
+        var wiki='https://es.wikipedia.org/w/index.php?search='+encodeURIComponent(l.w);
+        var s=document.createElement('div');s.className='bdl-slide';s.setAttribute('aria-hidden',i!==0);
+        s.innerHTML='<div class="bdl-ph"><span class="bdl-barrio">'+l.b+'</span><span class="bdl-num">'+(i+1)+' / '+N+'</span>'+
+          '<div class="ph">'+l.n+'</div><img alt="'+l.n+'" loading="'+(i<2?'eager':'lazy')+'" referrerpolicy="no-referrer"></div>'+
+          '<div class="bdl-body"><h4>'+l.n+'</h4><span class="bdl-dir"><i></i>'+l.d+'</span><p class="bdl-pista">'+l.p+'</p>'+
+          '<button class="bdl-btn">Investigar este lugar</button>'+
+          '<div class="bdl-inv"><a href="'+maps+'" target="_blank" rel="noopener"><i></i>Ubicarlo en el mapa ↗</a>'+
+          '<a href="'+wiki+'" target="_blank" rel="noopener"><i></i>Primeras fuentes ↗</a></div></div>';
+        var img=s.querySelector('img');
+        img.onerror=function(){img.remove();};
+        img.onload=function(){s.querySelector('.ph').style.display='none';};
+        img.src=l.img;
+        s.querySelector('.bdl-btn').addEventListener('click',function(){s.classList.toggle('on');});
+        track.appendChild(s);
+        var d=document.createElement('button');d.setAttribute('aria-label','Ir a '+l.n);
+        d.addEventListener('click',function(){go(i);});nav.appendChild(d);
+      });
+      function go(i){
+        cur=(i+N)%N;
+        track.style.transform='translateX('+(-100*cur)+'%)';
+        [].forEach.call(track.children,function(s,k){s.setAttribute('aria-hidden',k!==cur);});
+        [].forEach.call(nav.children,function(d,k){d.classList.toggle('on',k===cur);});
+      }
+      root.querySelector('.bdl-prev').addEventListener('click',function(){go(cur-1);});
+      root.querySelector('.bdl-next').addEventListener('click',function(){go(cur+1);});
+      stage.tabIndex=0;
+      stage.addEventListener('keydown',function(e){if(e.key==='ArrowLeft')go(cur-1);if(e.key==='ArrowRight')go(cur+1);});
+      var sx=null;
+      stage.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;},{passive:true});
+      stage.addEventListener('touchend',function(e){if(sx===null)return;var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>45)go(cur+(dx<0?1:-1));sx=null;});
+      go(0);
+    })();
+  </script>
+</div>
