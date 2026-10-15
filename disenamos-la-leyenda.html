@@ -1,0 +1,175 @@
+<!-- D5 · Actividad 4 · Diseñamos la leyenda (organizador por pasos) -->
+<link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>html,body{margin:0;padding:0}</style>
+<div class="dl">
+  <style>
+    .dl{--celeste:#8DE2D6;--azul:#035C80;--amarillo:#FFCD02;--marino:#1D3343;--azul-claro:#E3EFF5;--amarillo-claro:#FFF8DC;--fondo:#F4F7F8;
+      font-family:'Encode Sans',Arial,sans-serif;color:var(--marino);background:var(--fondo);border:1px solid #DCE5EA;border-radius:12px;overflow:hidden;width:100%;box-sizing:border-box}
+    .dl *{box-sizing:border-box}
+    .dl-bar{display:flex;height:6px}.dl-bar span{flex:1}
+    .dl-in{padding:16px 14px 18px}
+    @media(min-width:760px){.dl-in{padding:22px 26px 24px}}
+
+    /* Progreso */
+    .dl-prog{display:flex;gap:6px;margin-bottom:14px}
+    .dl-prog button{all:unset;cursor:pointer;flex:1;height:8px;border-radius:5px;background:#D3DDE3;transition:background .2s}
+    .dl-prog button.done{background:var(--azul)}
+    .dl-prog button.on{background:var(--amarillo)}
+    .dl-prog button:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+
+    /* Paso */
+    .dl-card{background:#fff;border:1px solid #DCE5EA;border-radius:12px;padding:18px 16px}
+    @media(min-width:760px){.dl-card{padding:24px 28px}}
+    .dl-step{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--azul);text-transform:uppercase;letter-spacing:.03em;margin-bottom:8px}
+    .dl-step i{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--amarillo);color:var(--marino);display:grid;place-items:center;font-size:13px}
+    .dl-tag{font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:20px;margin-left:4px;text-transform:none;letter-spacing:0}
+    .dl-tag.real{background:var(--azul);color:#fff}
+    .dl-tag.inv{background:var(--celeste);color:var(--marino)}
+    .dl-tag.rel{background:var(--amarillo);color:var(--marino)}
+    .dl-card h4{margin:0 0 6px;font-size:23px;font-weight:800;line-height:1.25;color:var(--marino)}
+    .dl-help{margin:0 0 12px;font-size:15.5px;line-height:1.55;color:#4A5B66}
+    .dl-ideas{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 12px}
+    .dl-ideas b{font-size:12.5px;color:#4A5B66;margin-right:2px}
+    .dl-ideas span{font-size:13px;font-weight:600;background:var(--azul-claro);color:var(--azul);padding:4px 10px;border-radius:20px}
+    .dl-card textarea{width:100%;min-height:120px;resize:vertical;font-family:inherit;font-size:16.5px;line-height:1.55;color:var(--marino);border:2px solid #C9D3D9;border-radius:10px;padding:12px 14px;background:#FCFDFD}
+    .dl-card textarea:focus{outline:none;border-color:var(--azul);background:#fff}
+    .dl-note{margin:10px 0 0;font-size:14px;line-height:1.5;background:var(--amarillo-claro);border-left:4px solid var(--amarillo);border-radius:0 8px 8px 0;padding:8px 12px}
+    .dl-count{text-align:right;font-size:12px;color:#7A8A94;margin-top:4px}
+
+    /* Navegación */
+    .dl-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px}
+    .dl-btn{all:unset;box-sizing:border-box;cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;padding:10px 18px;border-radius:9px;white-space:nowrap}
+    .dl-btn.pri{background:var(--azul);color:#fff}
+    .dl-btn.sec{background:#fff;color:var(--azul);border:2px solid var(--azul)}
+    .dl-btn.ghost{color:#4A5B66;font-weight:600;font-size:13.5px;text-decoration:underline;padding:8px 6px}
+    .dl-btn[disabled]{opacity:.35;cursor:default}
+    .dl-btn:focus-visible{outline:3px solid var(--amarillo)}
+
+    /* Resumen */
+    .dl-sum[hidden],.dl-wiz[hidden]{display:none}
+    .dl-sum h4{margin:0 0 4px;font-size:24px;font-weight:800;color:var(--azul)}
+    .dl-sum .sub{margin:0 0 16px;font-size:14.5px;color:#4A5B66}
+    .dl-cols{display:grid;gap:12px}
+    @media(min-width:760px){.dl-cols{grid-template-columns:1fr 1.4fr 1fr}}
+    .dl-col{border-radius:10px;overflow:hidden;border:1px solid #DCE5EA;background:#fff}
+    .dl-col>b{display:block;padding:9px 14px;font-size:14px;font-weight:800}
+    .dl-col.real>b{background:var(--azul);color:#fff}
+    .dl-col.rel>b{background:var(--amarillo);color:var(--marino)}
+    .dl-col.inv>b{background:var(--celeste);color:var(--marino)}
+    .dl-item{padding:10px 14px;border-top:1px solid #EEF2F4}
+    .dl-item small{display:block;font-size:12px;font-weight:800;color:#7A8A94;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
+    .dl-item p{margin:0;font-size:15px;line-height:1.5;white-space:pre-wrap}
+    .dl-item p.empty{color:#B3261E;font-style:italic;font-size:14px}
+    .dl-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+    .dl-msg{font-size:13.5px;color:var(--azul);font-weight:700;align-self:center}
+  </style>
+
+  <div class="dl-bar"><span style="background:#8DE2D6"></span><span style="background:#035C80"></span><span style="background:#FFCD02"></span><span style="background:#1D3343"></span></div>
+  <div class="dl-in">
+    <div class="dl-wiz">
+      <div class="dl-prog"></div>
+      <div class="dl-card"></div>
+      <div class="dl-nav">
+        <button class="dl-btn sec dl-prev">← Anterior</button>
+        <button class="dl-btn pri dl-next">Siguiente →</button>
+      </div>
+    </div>
+    <div class="dl-sum" hidden>
+      <div class="dl-card">
+        <h4>El plan de nuestra leyenda</h4>
+        <p class="sub">Revisen el plan antes de empezar a escribir. Lo real y lo inventado tienen que quedar bien separados.</p>
+        <div class="dl-cols"></div>
+        <div class="dl-acts">
+          <button class="dl-btn pri dl-copy">Copiar el plan</button>
+          <button class="dl-btn sec dl-down">Descargar el plan</button>
+          <button class="dl-btn sec dl-edit">Volver a editar</button>
+          <button class="dl-btn ghost dl-reset">Empezar de nuevo</button>
+          <span class="dl-msg"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      var root=document.currentScript.closest('.dl');
+      var KEY='memorias-ciudad-plan-leyenda';
+      var S=[
+        {k:'lugar',g:'real',t:'¿Dónde ocurre la historia?',h:'Escriban el lugar real que investigaron: nombre, barrio y algún rasgo que lo identifique.',
+         n:'Usen los datos de su Ficha del lugar.'},
+        {k:'inicio',g:'rel',t:'¿Cómo empieza?',h:'Piensen en el momento o la situación inicial: cuándo pasa y qué está ocurriendo en el lugar.',
+         i:['una noche de tormenta','el último día que funcionó','durante una obra','un día cualquiera de semana','una fecha especial']},
+        {k:'extrano',g:'inv',t:'¿Qué pasa que no tiene explicación?',h:'Este es el corazón de la leyenda: un hecho extraño o imposible.',
+         i:['una aparición','un sonido sin origen','un objeto que cambia de lugar','alguien que desaparece','el tiempo que se detiene','una puerta que no estaba']},
+        {k:'quien',g:'rel',t:'¿Quién cuenta la historia?',h:'Las leyendas pasan de boca en boca. Decidan quién la cuenta o cómo llegó hasta nosotros.',
+         i:['un vecino de toda la vida','alguien que trabajó en el lugar','un diario viejo','un testigo que nadie conoce','“se dice que…”']},
+        {k:'detalle',g:'real',t:'¿Qué detalle real la hace creíble?',h:'Elijan un dato verdadero de su ficha que haga que la historia parezca posible: una fecha, una medida, un cambio de uso, una característica del edificio.',
+         n:'Este dato tiene que estar en la Ficha del lugar, con su fuente.'},
+        {k:'duda',g:'rel',t:'¿Qué duda queda abierta?',h:'Una buena leyenda no lo explica todo. ¿Qué pregunta queda sin respuesta al final?',
+         i:['¿fue real o lo imaginó?','¿qué pasó con quien desapareció?','¿volverá a ocurrir?','¿por qué solo ahí?']},
+        {k:'invento',g:'inv',t:'¿Qué parte es inventada?',h:'Señalen con claridad qué inventaron ustedes, para que nadie lo confunda con un dato real.',
+         n:'Lo que escriban acá no va en la Ficha del lugar.'}
+      ];
+      var TAG={real:['real','Lo real'],rel:['rel','El relato'],inv:['inv','Lo inventado']};
+      var data={}; try{data=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){}
+      function save(){try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}}
+      var cur=0, prog=root.querySelector('.dl-prog'), card=root.querySelector('.dl-wiz .dl-card');
+      var prev=root.querySelector('.dl-prev'), next=root.querySelector('.dl-next');
+      S.forEach(function(s,i){var b=document.createElement('button');b.setAttribute('aria-label','Paso '+(i+1));b.addEventListener('click',function(){show(i);});prog.appendChild(b);});
+      function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+      function show(i){
+        cur=i; var s=S[i], tg=TAG[s.g];
+        card.innerHTML='<span class="dl-step"><i>'+(i+1)+'</i>Paso '+(i+1)+' de '+S.length+'<span class="dl-tag '+tg[0]+'">'+tg[1]+'</span></span>'+
+          '<h4>'+s.t+'</h4><p class="dl-help">'+s.h+'</p>'+
+          (s.i?'<div class="dl-ideas"><b>Ideas para pensar:</b>'+s.i.map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>':'')+
+          '<textarea placeholder="Escriban acá con sus palabras…">'+esc(data[s.k]||'')+'</textarea><div class="dl-count"></div>'+
+          (s.n?'<p class="dl-note">'+s.n+'</p>':'');
+        var ta=card.querySelector('textarea'), cnt=card.querySelector('.dl-count');
+        function upd(){data[s.k]=ta.value;save();cnt.textContent=ta.value.trim()?'':'Todavía sin completar';paint();}
+        ta.addEventListener('input',upd); upd();
+        prev.disabled=i===0;
+        next.textContent=i===S.length-1?'Ver el plan':'Siguiente →';
+        paint();
+      }
+      function paint(){[].forEach.call(prog.children,function(b,k){b.className=k===cur?'on':((data[S[k].k]||'').trim()?'done':'');});}
+      prev.addEventListener('click',function(){if(cur>0)show(cur-1);});
+      next.addEventListener('click',function(){if(cur<S.length-1)show(cur+1);else summary();});
+
+      var wiz=root.querySelector('.dl-wiz'), sum=root.querySelector('.dl-sum'), cols=root.querySelector('.dl-cols'), msg=root.querySelector('.dl-msg');
+      var GROUPS=[['real','Lo real',['lugar','detalle']],['rel','El relato',['inicio','quien','duda']],['inv','Lo inventado',['extrano','invento']]];
+      function lbl(k){for(var i=0;i<S.length;i++)if(S[i].k===k)return S[i].t;}
+      function summary(){
+        cols.innerHTML=GROUPS.map(function(g){
+          return '<div class="dl-col '+g[0]+'"><b>'+g[1]+'</b>'+g[2].map(function(k){
+            var v=(data[k]||'').trim();
+            return '<div class="dl-item"><small>'+lbl(k)+'</small>'+(v?'<p>'+esc(v)+'</p>':'<p class="empty">Falta completar</p>')+'</div>';
+          }).join('')+'</div>';
+        }).join('');
+        msg.textContent=''; wiz.hidden=true; sum.hidden=false;
+      }
+      function text(){
+        return 'EL PLAN DE NUESTRA LEYENDA\n\n'+GROUPS.map(function(g){
+          return g[1].toUpperCase()+'\n'+g[2].map(function(k){return '- '+lbl(k)+'\n  '+((data[k]||'').trim()||'(falta completar)');}).join('\n');
+        }).join('\n\n');
+      }
+      root.querySelector('.dl-edit').addEventListener('click',function(){sum.hidden=true;wiz.hidden=false;show(0);});
+      root.querySelector('.dl-copy').addEventListener('click',function(){
+        var t=text();
+        function ok(){msg.textContent='¡Plan copiado! Pegalo en su documento.';}
+        if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fallback);}else fallback();
+        function fallback(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok();}catch(e){msg.textContent='No se pudo copiar. Usen "Descargar el plan".';}a.remove();}
+      });
+      root.querySelector('.dl-down').addEventListener('click',function(){
+        var b=new Blob([text()],{type:'text/plain;charset=utf-8'}), a=document.createElement('a');
+        a.href=URL.createObjectURL(b);a.download='plan-de-nuestra-leyenda.txt';document.body.appendChild(a);a.click();a.remove();
+        msg.textContent='Plan descargado.';
+      });
+      root.querySelector('.dl-reset').addEventListener('click',function(){
+        if(!root.querySelector('.dl-reset').dataset.sure){root.querySelector('.dl-reset').dataset.sure='1';root.querySelector('.dl-reset').textContent='¿Seguro? Se borra todo. Tocá de nuevo';return;}
+        data={};save();delete root.querySelector('.dl-reset').dataset.sure;root.querySelector('.dl-reset').textContent='Empezar de nuevo';
+        sum.hidden=true;wiz.hidden=false;show(0);
+      });
+      show(0);
+    })();
+  </script>
+</div>
