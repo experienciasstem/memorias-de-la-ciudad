@@ -62,6 +62,20 @@
     .dl-item p.empty{color:#B3261E;font-style:italic;font-size:14px}
     .dl-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
     .dl-msg{font-size:13.5px;color:var(--azul);font-weight:700;align-self:center}
+
+    /* Alto fijo: el recurso mide siempre 500 px, en todos los pasos y en el resumen */
+    .dl{height:500px;max-height:500px;display:flex;flex-direction:column}
+    .dl-bar{flex:none}
+    .dl-in{flex:1;min-height:0;display:flex;flex-direction:column}
+    .dl-wiz,.dl-sum{flex:1;min-height:0;display:flex;flex-direction:column}
+    .dl-prog,.dl-nav{flex:none}
+    .dl-wiz .dl-card{flex:1;min-height:0;display:flex;flex-direction:column}
+    .dl-wiz .dl-card>*{flex:none}
+    .dl-wiz .dl-card textarea{flex:1 1 auto;min-height:56px;height:auto;resize:none}
+    .dl-sum .dl-card{flex:1;min-height:0;display:flex;flex-direction:column}
+    .dl-sum .dl-card>*{flex:none}
+    .dl-sum .dl-cols{flex:1 1 auto;min-height:0;overflow-y:auto;grid-auto-rows:max-content;align-content:start}
+    @media(min-width:760px){.dl-sum .dl-cols{overflow:hidden;grid-auto-rows:auto;align-content:stretch}.dl-col{overflow-y:auto;min-height:0}}
   </style>
 
   <div class="dl-bar"><span style="background:#8DE2D6"></span><span style="background:#035C80"></span><span style="background:#FFCD02"></span><span style="background:#1D3343"></span></div>
