@@ -81,7 +81,8 @@
         <div class="dl-cols"></div>
         <div class="dl-acts">
           <button class="dl-btn pri dl-copy">Copiar el plan</button>
-          <button class="dl-btn sec dl-down">Descargar el plan</button>
+          <button class="dl-btn sec dl-word">Descargar en Word</button>
+          <button class="dl-btn sec dl-pdf">Descargar en PDF</button>
           <button class="dl-btn sec dl-edit">Volver a editar</button>
           <button class="dl-btn ghost dl-reset">Empezar de nuevo</button>
           <span class="dl-msg"></span>
@@ -96,19 +97,23 @@
       var KEY='memorias-ciudad-plan-leyenda';
       var S=[
         {k:'lugar',g:'real',t:'¿Dónde ocurre la historia?',h:'Escriban el lugar real que investigaron: nombre, barrio y algún rasgo que lo identifique.',
-         n:'Usen los datos de su Ficha del lugar.'},
+         n:'Recuperen la información de su Ficha de investigación.'},
         {k:'inicio',g:'rel',t:'¿Cómo empieza?',h:'Piensen en el momento o la situación inicial: cuándo pasa y qué está ocurriendo en el lugar.',
-         i:['una noche de tormenta','el último día que funcionó','durante una obra','un día cualquiera de semana','una fecha especial']},
+         i:['una noche de tormenta','el último día que funcionó','durante una obra','un día cualquiera de semana','una fecha especial'],
+         n:'El inicio debe ubicar la historia en un momento y una situación concretos.'},
         {k:'extrano',g:'inv',t:'¿Qué pasa que no tiene explicación?',h:'Este es el corazón de la leyenda: un hecho extraño o imposible.',
-         i:['una aparición','un sonido sin origen','un objeto que cambia de lugar','alguien que desaparece','el tiempo que se detiene','una puerta que no estaba']},
+         i:['una aparición','un sonido sin origen','un objeto que cambia de lugar','alguien que desaparece','el tiempo que se detiene','una puerta que no estaba'],
+         n:'Este hecho puede ser ficcional, pero debe relacionarse con el lugar elegido.'},
         {k:'quien',g:'rel',t:'¿Quién cuenta la historia?',h:'Las leyendas pasan de boca en boca. Decidan quién la cuenta o cómo llegó hasta nosotros.',
-         i:['un vecino de toda la vida','alguien que trabajó en el lugar','un diario viejo','un testigo que nadie conoce','“se dice que…”']},
+         i:['un vecino de toda la vida','alguien que trabajó en el lugar','un diario viejo','un testigo que nadie conoce','“se dice que…”'],
+         n:'Piensen quién podría haber visto, escuchado o transmitido esta historia.'},
         {k:'detalle',g:'real',t:'¿Qué detalle real la hace creíble?',h:'Elijan un dato verdadero de su ficha que haga que la historia parezca posible: una fecha, una medida, un cambio de uso, una característica del edificio.',
-         n:'Este dato tiene que estar en la Ficha del lugar, con su fuente.'},
+         n:'Elijan información verificada en su Ficha de investigación y conserven su fuente.'},
         {k:'duda',g:'rel',t:'¿Qué duda queda abierta?',h:'Una buena leyenda no lo explica todo. ¿Qué pregunta queda sin respuesta al final?',
-         i:['¿fue real o lo imaginó?','¿qué pasó con quien desapareció?','¿volverá a ocurrir?','¿por qué solo ahí?']},
+         i:['¿fue real o lo imaginó?','¿qué pasó con quien desapareció?','¿volverá a ocurrir?','¿por qué solo ahí?'],
+         n:'No hace falta explicar todo: una leyenda puede dejar preguntas sin respuesta.'},
         {k:'invento',g:'inv',t:'¿Qué parte es inventada?',h:'Señalen con claridad qué inventaron ustedes, para que nadie lo confunda con un dato real.',
-         n:'Lo que escriban acá no va en la Ficha del lugar.'}
+         n:'Distingan con claridad qué elementos pertenecen a la ficción.'}
       ];
       var TAG={real:['real','Lo real'],rel:['rel','El relato'],inv:['inv','Lo inventado']};
       var data={}; try{data=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){}
@@ -157,12 +162,87 @@
         var t=text();
         function ok(){msg.textContent='¡Plan copiado! Pegalo en su documento.';}
         if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fallback);}else fallback();
-        function fallback(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok();}catch(e){msg.textContent='No se pudo copiar. Usen "Descargar el plan".';}a.remove();}
+        function fallback(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok();}catch(e){msg.textContent='No se pudo copiar. Usen "Descargar en Word" o "Descargar en PDF".';}a.remove();}
       });
-      root.querySelector('.dl-down').addEventListener('click',function(){
-        var b=new Blob([text()],{type:'text/plain;charset=utf-8'}), a=document.createElement('a');
-        a.href=URL.createObjectURL(b);a.download='plan-de-nuestra-leyenda.txt';document.body.appendChild(a);a.click();a.remove();
-        msg.textContent='Plan descargado.';
+      var COL={real:{bg:'#035C80',fg:'#FFFFFF',rgb:[3,92,128],tx:[255,255,255]},rel:{bg:'#FFCD02',fg:'#1D3343',rgb:[255,205,2],tx:[29,51,67]},inv:{bg:'#8DE2D6',fg:'#1D3343',rgb:[141,226,214],tx:[29,51,67]}};
+      var SUB='Revisen el plan antes de empezar a escribir. Lo real y lo inventado tienen que quedar bien separados.';
+      function bajar(blob,nombre){
+        var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nombre;document.body.appendChild(a);a.click();a.remove();
+        setTimeout(function(){URL.revokeObjectURL(a.href);},4000);
+      }
+
+      // Word: documento .doc con los colores de cada bloque
+      root.querySelector('.dl-word').addEventListener('click',function(){
+        var cuerpo=GROUPS.map(function(g){
+          var c=COL[g[0]];
+          var filas=g[2].map(function(k){
+            var v=(data[k]||'').trim();
+            return '\x3cp style="margin-top:10pt;margin-bottom:1pt;margin-left:0;font-size:8.5pt;font-weight:bold;color:#7A8A94">'+esc(lbl(k)).toUpperCase()+'\x3c/p>'+
+              (v?'\x3cp style="margin-top:0;margin-bottom:0;margin-left:0;font-size:11.5pt;line-height:140%;color:#1D3343">'+esc(v).replace(/\n/g,'\x3cbr>')+'\x3c/p>'
+                :'\x3cp style="margin-top:0;margin-bottom:0;margin-left:0;font-size:11pt;font-style:italic;color:#B3261E">Falta completar\x3c/p>');
+          }).join('');
+          return '\x3cp style="margin:0;font-size:6pt">&nbsp;\x3c/p>'+
+            '\x3ctable width="100%" cellspacing="0" cellpadding="7" style="border-collapse:collapse;width:100%">'+
+            '\x3ctr>\x3ctd bgcolor="'+c.bg+'" style="background:'+c.bg+';padding:6pt 9pt">\x3cb>\x3cspan style="font-size:12.5pt;color:'+c.fg+'">'+g[1]+'\x3c/span>\x3c/b>\x3c/td>\x3c/tr>'+
+            '\x3ctr>\x3ctd style="padding:0 9pt 8pt 9pt;border:1pt solid #DCE5EA;border-top:none">'+filas+'\x3c/td>\x3c/tr>\x3c/table>';
+        }).join('');
+        var franja=['#8DE2D6','#035C80','#FFCD02','#1D3343'].map(function(c){
+          return '\x3ctd width="25%" bgcolor="'+c+'" style="background:'+c+';height:4pt;padding:0">\x3cp style="margin:0;font-size:1pt;line-height:1pt;mso-line-height-rule:exactly">&nbsp;\x3c/p>\x3c/td>';
+        }).join('');
+        var html='\x3chtml xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'+
+          '\x3chead>\x3cmeta charset="utf-8">\x3ctitle>El plan de nuestra leyenda\x3c/title>'+
+          '\x3cstyle>@page{size:21cm 29.7cm;margin:2cm}body{font-family:Arial,sans-serif;color:#1D3343}p{margin:0}\x3c/style>\x3c/head>\x3cbody>'+
+          '\x3ctable width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;width:100%">\x3ctr style="height:4pt">'+franja+'\x3c/tr>\x3c/table>'+
+          '\x3cp style="margin-top:12pt;margin-bottom:3pt;margin-left:0;font-size:20pt;font-weight:bold;color:#035C80">El plan de nuestra leyenda\x3c/p>'+
+          '\x3cp style="margin-top:0;margin-bottom:4pt;margin-left:0;font-size:10.5pt;color:#4A5B66">'+SUB+'\x3c/p>'+cuerpo+'\x3c/body>\x3c/html>';
+        bajar(new Blob(['\ufeff',html],{type:'application/msword'}),'plan-de-nuestra-leyenda.doc');
+        msg.textContent='Plan descargado en Word.';
+      });
+
+      // PDF: se arma con jsPDF (se carga solo la primera vez que se usa)
+      function conJsPDF(fn){
+        if(window.jspdf&&window.jspdf.jsPDF)return fn(window.jspdf.jsPDF);
+        var sc=document.createElement('script');
+        sc.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        sc.onload=function(){fn(window.jspdf.jsPDF);};
+        sc.onerror=function(){msg.textContent='No se pudo generar el PDF (revisen la conexión). Prueben con "Descargar en Word".';};
+        document.head.appendChild(sc);
+      }
+      root.querySelector('.dl-pdf').addEventListener('click',function(){
+        msg.textContent='Preparando el PDF…';
+        conJsPDF(function(jsPDF){
+          var doc=new jsPDF({unit:'mm',format:'a4'}), W=210, M=18, A=W-2*M, y=M, H=297;
+          function nueva(){doc.addPage();y=M;}
+          function lugar(h){if(y+h>H-M)nueva();}
+          var franja=[[141,226,214],[3,92,128],[255,205,2],[29,51,67]];
+          franja.forEach(function(c,i){doc.setFillColor(c[0],c[1],c[2]);doc.rect(M+i*A/4,y,A/4,1.6,'F');});
+          y+=10;
+          doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(3,92,128);doc.text('El plan de nuestra leyenda',M,y);y+=7;
+          doc.setFont('helvetica','normal');doc.setFontSize(10.5);doc.setTextColor(74,91,102);
+          var sub=doc.splitTextToSize(SUB,A);doc.text(sub,M,y);y+=sub.length*5+4;
+          GROUPS.forEach(function(g){
+            var c=COL[g[0]];
+            lugar(22);
+            doc.setFillColor(c.rgb[0],c.rgb[1],c.rgb[2]);doc.roundedRect(M,y,A,9,1.5,1.5,'F');
+            doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(c.tx[0],c.tx[1],c.tx[2]);doc.text(g[1],M+4,y+6.1);
+            y+=13;
+            g[2].forEach(function(k){
+              var v=(data[k]||'').trim();
+              doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(122,138,148);
+              lugar(12);doc.text(lbl(k).toUpperCase(),M+4,y);y+=5;
+              if(v){
+                doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(29,51,67);
+                doc.splitTextToSize(v,A-8).forEach(function(l){lugar(6);doc.text(l,M+4,y);y+=5.4;});
+              }else{
+                doc.setFont('helvetica','italic');doc.setFontSize(10.5);doc.setTextColor(179,38,30);doc.text('Falta completar',M+4,y);y+=5.4;
+              }
+              y+=3;
+            });
+            y+=3;
+          });
+          bajar(doc.output('blob'),'plan-de-nuestra-leyenda.pdf');
+          msg.textContent='Plan descargado en PDF.';
+        });
       });
       root.querySelector('.dl-reset').addEventListener('click',function(){
         if(!root.querySelector('.dl-reset').dataset.sure){root.querySelector('.dl-reset').dataset.sure='1';root.querySelector('.dl-reset').textContent='¿Seguro? Se borra todo. Tocá de nuevo';return;}
