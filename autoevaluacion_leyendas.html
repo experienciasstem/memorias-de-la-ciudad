@@ -1,0 +1,276 @@
+<!-- Memorias de la ciudad · ¿Cómo trabajamos? · Autoevaluación grupal · alto fijo 500 px -->
+<link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>html,body{margin:0;padding:0}</style>
+<div class="ae">
+  <style>
+    .ae{--azul:#035C80;--marino:#1D3343;--celeste:#8DE2D6;--celeste-claro:#EEF9F7;--linea:#CFE3E1;--amarillo:#FFCD02;--amarillo-claro:#FFF8DC;--amarillo-borde:#F3E2A0;--gris:#4A5B66;
+      font-family:'Encode Sans',Arial,sans-serif;color:var(--marino);background:#fff;border:1px solid #DCE5EA;border-radius:12px;overflow:hidden;
+      width:100%;height:500px;max-height:500px;box-sizing:border-box;display:flex;flex-direction:column}
+    .ae *{box-sizing:border-box}
+    .ae [hidden]{display:none !important}
+
+    /* Encabezado */
+    .ae-head{flex:none;padding:12px 24px 8px;display:flex;align-items:baseline;justify-content:space-between;gap:6px 18px;flex-wrap:wrap}
+    .ae-head h2{margin:0;font-size:26px;font-weight:800;line-height:1.1;color:var(--marino)}
+    .ae-head p{margin:0;font-size:15px;font-weight:700;color:var(--azul)}
+
+    /* Pasos */
+    .ae-pasos{flex:none;display:flex;gap:6px;padding:0 24px 10px}
+    .ae-pasos button{all:unset;box-sizing:border-box;cursor:pointer;font-family:inherit;flex:1;display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;
+      font-size:13.5px;font-weight:700;color:var(--gris);background:#F2F6F7;border:1.5px solid transparent;white-space:nowrap;overflow:hidden}
+    .ae-pasos button i{font-style:normal;flex:none;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;background:#fff;color:var(--gris);border:1.5px solid #C9D3D9}
+    .ae-pasos button[aria-selected="true"]{background:var(--azul);color:#fff}
+    .ae-pasos button[aria-selected="true"] i{background:#fff;color:var(--azul);border-color:#fff}
+    .ae-pasos button.listo:not([aria-selected="true"]) i{background:var(--celeste);border-color:var(--celeste);color:var(--marino)}
+    .ae-pasos button:focus-visible{outline:3px solid var(--amarillo);outline-offset:1px}
+
+    /* Cuerpo */
+    .ae-cuerpo{flex:1;min-height:0;padding:0 24px;display:flex;flex-direction:column}
+    .ae-panel{flex:1;min-height:0;display:flex;flex-direction:column}
+
+    /* Datos */
+    .ae-datos{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:22px;background:var(--celeste-claro);border:1px solid var(--linea);border-radius:10px}
+    .ae-datos label{display:flex;flex-direction:column;gap:8px;font-size:15px;font-weight:700}
+    .ae input[type=text],.ae textarea{font-family:inherit;font-size:16px;color:var(--marino);border:1.5px solid #B9CDD3;border-radius:8px;background:#fff;padding:10px 12px;width:100%}
+    .ae input[type=text]:focus,.ae textarea:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(3,92,128,.15)}
+
+    /* Tabla */
+    .ae-tabla{flex:1;min-height:0;overflow:auto;border:1px solid var(--linea);border-radius:8px}
+    .ae table{width:100%;border-collapse:collapse;table-layout:fixed}
+    .ae th{position:sticky;top:0;background:var(--azul);color:#fff;font-size:14px;font-weight:700;padding:7px 10px;text-align:center}
+    .ae th:first-child{text-align:left;width:58%}
+    .ae td{border-top:1px solid var(--linea);padding:4px 10px;font-size:14.5px;line-height:1.25;vertical-align:middle}
+    .ae td+td{border-left:1px solid var(--linea);text-align:center;padding:0}
+    .ae tbody tr:nth-child(even) td{background:#F6FBFB}
+    .ae td label{display:flex;align-items:center;justify-content:center;min-height:32px;cursor:pointer}
+    .ae td input[type=radio]{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:0;border:2px solid #9FB3C0;border-radius:5px;background:#fff;cursor:pointer;display:grid;place-items:center}
+    .ae td input[type=radio]::after{content:"";width:11px;height:6px;border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+    .ae td input[type=radio]:checked{background:var(--azul);border-color:var(--azul)}
+    .ae td input[type=radio]:checked::after{opacity:1}
+    .ae td input[type=radio]:focus-visible{outline:3px solid var(--amarillo);outline-offset:2px}
+    .ae td label:hover input:not(:checked){border-color:var(--azul)}
+
+    /* Para cerrar */
+    .ae-cierre{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;background:var(--amarillo-claro);border:1px solid var(--amarillo-borde);border-radius:10px;padding:10px 16px 12px}
+    .ae-cierre h3{margin:0;font-size:16px;font-weight:800}
+    .ae-preg{flex:1;min-height:0;display:flex;flex-direction:column;gap:4px}
+    .ae-preg label{font-size:14px;font-weight:700;line-height:1.3}
+    .ae-preg textarea{flex:1;min-height:40px;resize:none;font-size:15px;line-height:1.4;padding:7px 10px}
+
+    /* Navegación */
+    .ae-nav{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 24px 12px}
+    .ae-btn{all:unset;box-sizing:border-box;cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;padding:9px 18px;border-radius:9px;white-space:nowrap}
+    .ae-btn.sec{color:var(--azul);border:2px solid var(--azul);background:#fff}
+    .ae-btn.pri{color:#fff;background:var(--azul)}
+    .ae-btn.entregar{color:var(--marino);background:var(--amarillo);font-size:17px;font-weight:800;padding:11px 26px;box-shadow:0 2px 6px rgba(29,51,67,.18)}
+    .ae-btn[disabled]{opacity:.35;cursor:default}
+    .ae-btn:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+    .ae-aviso{font-size:13px;color:var(--azul);font-weight:600;text-align:center;flex:1}
+
+    @media (max-width:700px){
+      .ae-head{padding:12px 14px 6px}.ae-head h2{font-size:21px}.ae-head p{font-size:13px}
+      .ae-pasos,.ae-cuerpo,.ae-nav{padding-left:14px;padding-right:14px}
+      .ae-pasos button span{display:none}.ae-pasos button{justify-content:center}
+      .ae-datos{grid-template-columns:1fr;padding:16px}
+      .ae th:first-child{width:52%}.ae th{font-size:12.5px;padding:7px 4px}
+      .ae td{font-size:13px;padding:5px 7px}
+      .ae-cierre{overflow:auto}
+      .ae-preg{flex:none}.ae-preg textarea{flex:none;height:64px}
+      .ae-btn.entregar{font-size:15px;padding:10px 16px}
+      .ae-aviso{display:none}
+    }
+  </style>
+
+  <div class="ae-head">
+    <h2>¿Cómo trabajamos?</h2>
+    <p>Autoevaluación · Memorias de la ciudad</p>
+  </div>
+
+  <div class="ae-pasos" role="tablist">
+    <button role="tab" data-p="0"><i>1</i><span>Datos del grupo</span></button>
+    <button role="tab" data-p="1"><i>2</i><span>Autoevaluación</span></button>
+    <button role="tab" data-p="2"><i>3</i><span>Para cerrar</span></button>
+  </div>
+
+  <div class="ae-cuerpo">
+    <section class="ae-panel" data-p="0">
+      <div class="ae-datos">
+        <label>Integrantes del grupo:<input type="text" data-k="integrantes" autocomplete="off"></label>
+        <label>Nuestra leyenda:<input type="text" data-k="leyenda" autocomplete="off"></label>
+      </div>
+    </section>
+
+    <section class="ae-panel" data-p="1" hidden>
+      <div class="ae-tabla">
+        <table>
+          <thead><tr><th scope="col">Criterio</th><th scope="col">Sí</th><th scope="col">En parte</th><th scope="col">Todavía no</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="ae-panel" data-p="2" hidden>
+      <div class="ae-cierre">
+        <h3>Para cerrar</h3>
+        <div class="ae-preg"><label for="ae-p1">1. ¿Qué dato real de la investigación usaron en su leyenda? ¿Por qué ayudó a que la historia pareciera posible?</label><textarea id="ae-p1" data-k="p1"></textarea></div>
+        <div class="ae-preg"><label for="ae-p2">2. ¿Cómo integraron elementos reales e inventados sin presentar la ficción como información comprobada?</label><textarea id="ae-p2" data-k="p2"></textarea></div>
+        <div class="ae-preg"><label for="ae-p3">3. Completen: “Antes pensábamos que una leyenda… y ahora sabemos que…”</label><textarea id="ae-p3" data-k="p3"></textarea></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="ae-nav">
+    <button class="ae-btn sec ae-ant">← Anterior</button>
+    <span class="ae-aviso" aria-live="polite"></span>
+    <button class="ae-btn pri ae-sig">Siguiente →</button>
+    <button class="ae-btn entregar ae-entregar" hidden>Descargar para entregar</button>
+  </div>
+
+  <script>
+    (function(){
+      var root=document.currentScript.closest('.ae');
+      var KEY='memorias-ciudad-autoevaluacion';
+      var CRIT=[
+        'Usamos distintas fuentes para investigar un lugar.',
+        'Diferenciamos información verificable, versiones y ficción.',
+        'Incorporamos un dato con números (fecha, medida o cantidad).',
+        'La leyenda se apoya en alguna característica real del lugar.',
+        'Revisamos el texto a partir de las devoluciones recibidas.',
+        'Integramos información real del lugar sin presentar los elementos inventados como datos comprobados.',
+        'Sumamos el audio y el enlace al lugar mediante códigos QR.',
+        'Participamos en las decisiones sobre la organización y publicación del libro colectivo.'
+      ];
+      var OPC=['Sí','En parte','Todavía no'];
+      var PREG=[
+        ['p1','1. ¿Qué dato real de la investigación usaron en su leyenda? ¿Por qué ayudó a que la historia pareciera posible?'],
+        ['p2','2. ¿Cómo integraron elementos reales e inventados sin presentar la ficción como información comprobada?'],
+        ['p3','3. Completen: “Antes pensábamos que una leyenda… y ahora sabemos que…”']
+      ];
+
+      // Respuestas: quedan guardadas solo en este navegador (no se envían a ningún lado)
+      var data={}; try{data=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){data={};}
+      if(!data.c)data.c={};
+      function save(){try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}}
+
+      // Tabla
+      var tb=root.querySelector('tbody');
+      CRIT.forEach(function(t,i){
+        var tr=document.createElement('tr');
+        var td=document.createElement('td');td.textContent=t;td.id='ae-c'+i;tr.appendChild(td);
+        OPC.forEach(function(o,j){
+          var c=document.createElement('td'),l=document.createElement('label'),r=document.createElement('input');
+          r.type='radio';r.name='ae-c'+i;r.value=j;r.setAttribute('aria-label',o+' — '+t);
+          if(data.c[i]===j)r.checked=true;
+          r.addEventListener('change',function(){data.c[i]=j;save();marcar();});
+          l.appendChild(r);c.appendChild(l);tr.appendChild(c);
+        });
+        tb.appendChild(tr);
+      });
+
+      // Campos de texto
+      root.querySelectorAll('[data-k]').forEach(function(el){
+        var k=el.getAttribute('data-k'); el.value=data[k]||'';
+        el.addEventListener('input',function(){data[k]=el.value;save();marcar();});
+      });
+
+      // Pasos
+      var tabs=[].slice.call(root.querySelectorAll('.ae-pasos button')), panels=[].slice.call(root.querySelectorAll('.ae-panel'));
+      var ant=root.querySelector('.ae-ant'), sig=root.querySelector('.ae-sig'), ent=root.querySelector('.ae-entregar'), aviso=root.querySelector('.ae-aviso');
+      var cur=0;
+      function ir(p){
+        cur=p;
+        panels.forEach(function(x,i){x.hidden=i!==p;});
+        tabs.forEach(function(t,i){t.setAttribute('aria-selected',i===p?'true':'false');});
+        ant.disabled=p===0; sig.hidden=p===2; ent.hidden=p!==2; aviso.textContent='';
+        marcar();
+      }
+      function completo(p){
+        if(p===0)return !!((data.integrantes||'').trim()&&(data.leyenda||'').trim());
+        if(p===1)return CRIT.every(function(_,i){return data.c[i]!==undefined;});
+        return PREG.every(function(q){return (data[q[0]]||'').trim();});
+      }
+      function marcar(){tabs.forEach(function(t,i){t.classList.toggle('listo',completo(i));});}
+      tabs.forEach(function(t,i){t.addEventListener('click',function(){ir(i);});});
+      ant.addEventListener('click',function(){if(cur>0)ir(cur-1);});
+      sig.addEventListener('click',function(){if(cur<2)ir(cur+1);});
+
+      // Versión para entregar
+      function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+      function val(k){var v=(data[k]||'').trim();return v?esc(v):'<span class="vacio">Sin completar</span>';}
+      function documento(){
+        var filas=CRIT.map(function(t,i){
+          return '<tr><td class="crit">'+esc(t)+'</td>'+OPC.map(function(o,j){
+            return data.c[i]===j?'<td class="sel"><span class="marca">✓</span></td>':'<td></td>';
+          }).join('')+'</tr>';
+        }).join('');
+        var preguntas=PREG.map(function(q){
+          return '<div class="preg"><p class="q">'+esc(q[1])+'</p><div class="r">'+val(q[0])+'</div></div>';
+        }).join('');
+        var titulo='Autoevaluación - '+((data.leyenda||'').trim()||'Memorias de la ciudad');
+        var L='\x3c';
+        return L+'!doctype html>'+L+'html lang="es">'+L+'head>'+L+'meta charset="utf-8">'+L+'title>'+esc(titulo)+L+'/title>'+
+          L+'link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">'+
+          L+'style>'+
+          '@page{size:A4;margin:16mm 15mm}'+
+          '*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+          'body{margin:0;font-family:"Encode Sans",Arial,sans-serif;color:#1D3343;background:#fff}'+
+          '.hoja{max-width:180mm;margin:0 auto;padding:10mm 0}'+
+          '.barra{position:sticky;top:0;background:#035C80;color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px}'+
+          '.barra button{font:inherit;font-weight:700;background:#FFCD02;color:#1D3343;border:0;border-radius:8px;padding:8px 16px;cursor:pointer}'+
+          'h1{margin:0 0 4px;font-size:28pt;font-weight:800}'+
+          '.sub{margin:0 0 16px;font-size:13pt;font-weight:700;color:#035C80}'+
+          '.datos{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;break-inside:avoid}'+
+          '.datos div{font-size:10.5pt}.datos b{display:block;font-weight:600;margin-bottom:3px}'+
+          '.datos span{display:block;border-bottom:1px solid #1D3343;padding:2px 0 4px;font-size:12pt;font-weight:700;min-height:22px;white-space:pre-wrap}'+
+          'table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:10.5pt}'+
+          'thead{display:table-header-group}'+
+          'th{background:#035C80;color:#fff;font-weight:700;padding:7px 8px;text-align:center;border:1px solid #8DE2D6}'+
+          'th:first-child{text-align:left;width:52%}'+
+          'td{border:1px solid #8DE2D6;padding:7px 8px;vertical-align:middle;text-align:center}'+
+          'td.crit{text-align:left;line-height:1.35}'+
+          'tr{break-inside:avoid;page-break-inside:avoid}'+
+          'tbody tr:nth-child(even) td{background:#F1F9F8}'+
+          'td.sel{background:#E3EFF5 !important}'+
+          '.marca{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:#035C80;color:#fff;font-weight:800;font-size:11pt}'+
+          '.cierre{background:#FFF8DC;border:1px solid #F3E2A0;border-radius:8px;padding:12px 16px}'+
+          '.cierre h2{margin:0 0 8px;font-size:13pt;font-weight:800;break-after:avoid;page-break-after:avoid}'+
+          '.preg{break-inside:avoid;page-break-inside:avoid;padding:8px 0 10px;border-top:1px solid #F3E2A0}'+
+          '.preg:first-of-type{border-top:0}'+
+          '.q{margin:0 0 5px;font-weight:700;font-size:10.5pt;line-height:1.35}'+
+          '.r{font-size:11pt;line-height:1.5;white-space:pre-wrap;background:#fff;border-radius:6px;padding:8px 10px;min-height:48px;orphans:3;widows:3}'+
+          '.vacio{color:#7A8A94;font-style:italic}'+
+          '@media print{.hoja{padding:0}.barra{display:none !important}}'+
+          L+'/style>'+L+'/head>'+L+'body>'+
+          '<div class="barra"><span>Para entregar: en la ventana de impresión, elegí <b>Guardar como PDF</b>.</span><button onclick="window.print()">Guardar como PDF</button></div>'.replace(/</g,L)+
+          ('<div class="hoja"><h1>¿Cómo trabajamos?</h1><p class="sub">Autoevaluación · Memorias de la ciudad</p>'+
+          '<div class="datos"><div><b>Integrantes del grupo:</b><span>'+val('integrantes')+'</span></div><div><b>Nuestra leyenda:</b><span>'+val('leyenda')+'</span></div></div>'+
+          '<table><thead><tr><th>Criterio</th><th>Sí</th><th>En parte</th><th>Todavía no</th></tr></thead><tbody>'+filas+'</tbody></table>'+
+          '<div class="cierre"><h2>Para cerrar</h2>'+preguntas+'</div></div>').replace(/</g,L)+
+          L+'script>window.addEventListener("load",function(){setTimeout(function(){window.print();},400);});'+L+'/script>'+
+          L+'/body>'+L+'/html>';
+      }
+      ent.addEventListener('click',function(){
+        var html=documento(), w=null;
+        try{w=window.open('','_blank');}catch(e){w=null;}
+        if(w&&w.document){
+          w.document.open();w.document.write(html);w.document.close();
+          aviso.textContent='Se abrió la versión para entregar en otra pestaña.';
+          return;
+        }
+        // Si el navegador bloquea las ventanas nuevas: imprimir desde un marco oculto
+        var f=document.createElement('iframe');
+        f.setAttribute('aria-hidden','true');
+        f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+        document.body.appendChild(f);
+        var d=f.contentWindow.document;d.open();d.write(html.replace(/window\.print\(\);\},400\)/,'},400)'));d.close();
+        setTimeout(function(){
+          try{f.contentWindow.focus();f.contentWindow.print();aviso.textContent='Elegí “Guardar como PDF” en la ventana de impresión.';}
+          catch(e){aviso.textContent='El navegador no permitió abrir la impresión.';}
+          setTimeout(function(){f.remove();},60000);
+        },600);
+      });
+
+      ir(0);
+    })();
+  </script>
+</div>
